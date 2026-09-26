@@ -1,0 +1,32 @@
+{
+  "meta": {"count": 2, "db_response_time_ms": 20, "page": 1, "per_page": 2},
+  "results": [
+    {
+      "id": "https://openalex.org/W3000000001",
+      "doi": "https://doi.org/10.1086/705716",
+      "title": "Robots and Jobs: Evidence from US Labor Markets",
+      "display_name": "Robots and Jobs: Evidence from US Labor Markets",
+      "publication_year": 2020,
+      "type": "article",
+      "language": "en",
+      "authorships": [
+        {"author_position": "first", "author": {"id": "https://openalex.org/A1", "display_name": "Daron Acemoglu"}},
+        {"author_position": "last", "author": {"id": "https://openalex.org/A2", "display_name": "Pascual Restrepo"}}
+      ],
+      "primary_location": {"source": {"id": "https://openalex.org/S1", "display_name": "Journal of Political Economy"}}
+    },
+    {
+      "id": "https://openalex.org/W3000000002",
+      "doi": null,
+      "title": "Robots and jobs: a working paper version",
+      "display_name": "Robots and jobs: a working paper version",
+      "publication_year": 2017,
+      "type": "preprint",
+      "language": "en",
+      "authorships": [
+        {"author_position": "first", "author": {"id": "https://openalex.org/A1", "display_name": "Daron Acemoglu"}}
+      ],
+      "primary_location": null
+    }
+  ]
+}

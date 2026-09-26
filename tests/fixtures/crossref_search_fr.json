@@ -1,0 +1,43 @@
+{
+  "status": "ok",
+  "message-type": "work-list",
+  "message-version": "1.0.0",
+  "message": {
+    "facets": {},
+    "total-results": 3,
+    "items": [
+      {
+        "DOI": "10.1787/aeo-2009-table20-fr",
+        "title": ["Emploi et envois de fonds"],
+        "container-title": ["Perspectives économiques en Afrique 2009"],
+        "issued": {"date-parts": [[2009]]},
+        "type": "other",
+        "publisher": "OECD",
+        "language": "fr",
+        "score": 38.001328
+      },
+      {
+        "DOI": "10.1787/aeo-2009-table3_20-fr",
+        "title": ["Emploi et envois de fonds"],
+        "issued": {"date-parts": [[2009, 7, 14]]},
+        "type": "component",
+        "publisher": "OECD",
+        "score": 36.83107
+      },
+      {
+        "DOI": "10.1787/aae5dba0-fr",
+        "title": ["Perspectives de l'emploi de l'OCDE 2023"],
+        "subtitle": ["Intelligence artificielle et marché du travail"],
+        "author": [{"name": "OCDE", "sequence": "first", "affiliation": []}],
+        "container-title": ["Perspectives de l'emploi de l'OCDE"],
+        "issued": {"date-parts": [[2023, 7, 11]]},
+        "type": "book",
+        "publisher": "OECD Publishing",
+        "language": "fr",
+        "score": 33.106503
+      }
+    ],
+    "items-per-page": 3,
+    "query": {"start-index": 0, "search-terms": null}
+  }
+}

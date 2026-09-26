@@ -1,0 +1,21 @@
+{
+  "status": "ok",
+  "message-type": "work",
+  "message-version": "1.0.0",
+  "message": {
+    "DOI": "10.1145/3442188.3445922",
+    "title": ["On the Dangers of Stochastic Parrots"],
+    "subtitle": ["Can Language Models Be Too Big?"],
+    "author": [
+      {"given": "Emily M.", "family": "Bender", "sequence": "first", "affiliation": []},
+      {"given": "Timnit", "family": "Gebru", "sequence": "additional", "affiliation": []},
+      {"given": "Angelina", "family": "McMillan-Major", "sequence": "additional", "affiliation": []},
+      {"given": "Shmargaret", "family": "Shmitchell", "sequence": "additional", "affiliation": []}
+    ],
+    "container-title": ["Proceedings of the 2021 ACM Conference on Fairness, Accountability, and Transparency"],
+    "issued": {"date-parts": [[2021, 3]]},
+    "type": "proceedings-article",
+    "publisher": "ACM",
+    "language": "en"
+  }
+}
