@@ -170,3 +170,72 @@ def test_provider_from_environment(monkeypatch):
     settings = Settings.from_env()
     assert settings.provider == "openai_compatible"
     assert settings.base_url == "http://gpu-server:8000/v1"
+
+
+def test_arguments_in_the_wrong_json_type_are_repaired():
+    # Shapes recorded from Llama 3.1 8B through Ollama in the first live run: the list arrives
+    # as a JSON-encoded string, numbers as strings and null as "null".
+    from refresolver.resolver import EXTRACT_TOOL
+
+    references = json.dumps(
+        [
+            {
+                "index": 1,
+                "authors": ["OECD.AI Policy Observatory"],
+                "container": "null",
+                "title": "Live data on AI",
+                "year": "null",
+            },
+            {
+                "index": "2",
+                "authors": ["Rossi", "Moreau"],
+                "container": "Working Paper No. 7",
+                "title": "Agentic workflows",
+                "year": 2024,
+            },
+        ]
+    )
+    choose = {
+        "name": "choose_candidate",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "choice": {"type": "integer", "enum": [0, 1, 2]},
+                "confidence": {"type": "number"},
+                "rationale": {"type": "string"},
+            },
+        },
+    }
+    replies = [
+        tool_call("record_references", {"references": references}),
+        tool_call("choose_candidate", {"choice": "1", "confidence": "1", "rationale": "match"}),
+    ]
+    client = OpenAICompatibleClient("http://x/v1", "m", http_client=scripted_endpoint(replies, []))
+    msgs = [{"role": "user", "content": "q"}]
+    extracted = client.create(
+        system="s",
+        messages=msgs,
+        tools=[EXTRACT_TOOL],
+        tool_choice={"type": "tool", "name": "record_references"},
+    )
+    refs = extracted.tool_calls[0].input["references"]
+    assert refs[0]["year"] is None and refs[0]["container"] is None
+    assert refs[1]["index"] == 2 and refs[1]["year"] == 2024
+    chosen = client.create(
+        system="s",
+        messages=msgs,
+        tools=[choose],
+        tool_choice={"type": "tool", "name": "choose_candidate"},
+    )
+    assert chosen.tool_calls[0].input == {"choice": 1, "confidence": 1.0, "rationale": "match"}
+
+
+def test_ambiguous_values_are_left_alone():
+    from refresolver.llm import coerce_to_schema
+
+    schema = {
+        "type": "object",
+        "properties": {"title": {"type": ["string", "null"]}, "n": {"type": "integer"}},
+    }
+    assert coerce_to_schema({"title": "1984", "n": "two"}, schema) == {"title": "1984", "n": "two"}
+    assert coerce_to_schema("[not json", {"type": "array"}) == "[not json"

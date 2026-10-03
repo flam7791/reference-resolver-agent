@@ -19,6 +19,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Protocol
@@ -224,6 +225,7 @@ class OpenAICompatibleClient:
         data = response.json()
         message = data["choices"][0]["message"]
         text = message.get("content") or ""
+        schemas = {t["name"]: t.get("input_schema", {}) for t in tools or []}
         calls = []
         for i, c in enumerate(message.get("tool_calls") or []):
             fn = c.get("function", {})
@@ -232,12 +234,17 @@ class OpenAICompatibleClient:
                 parsed = json.loads(args) if isinstance(args, str) else dict(args)
             except ValueError:
                 continue  # malformed arguments: treated as no call
-            calls.append(ToolCall(c.get("id") or f"call_{i}", fn.get("name", ""), parsed))
+            name = fn.get("name", "")
+            parsed = coerce_to_schema(parsed, schemas.get(name, {}))
+            calls.append(ToolCall(c.get("id") or f"call_{i}", name, parsed))
         forced = tool_choice and tool_choice.get("type") == "tool"
         if not calls and forced and text:
             parsed = _json_object(text)
             if parsed is not None:
-                calls.append(ToolCall("call_text_0", tool_choice["name"], parsed))
+                name = tool_choice["name"]
+                calls.append(
+                    ToolCall("call_text_0", name, coerce_to_schema(parsed, schemas.get(name, {})))
+                )
         content = [{"type": "text", "text": text}] if text else []
         content += [
             {"type": "tool_use", "id": c.id, "name": c.name, "input": c.input} for c in calls
@@ -250,6 +257,47 @@ class OpenAICompatibleClient:
             input_tokens=int(usage.get("prompt_tokens", 0)),
             output_tokens=int(usage.get("completion_tokens", 0)),
         )
+
+
+def coerce_to_schema(value, schema: dict):
+    """Repair tool arguments to the types the tool's JSON schema declares.
+
+    Small open-weight models often return correct values in the wrong JSON type: a list as a
+    JSON-encoded string ("[{...}]"), a number as "1", null as "null". Found in the first live
+    run with Llama 3.1 8B through Ollama, where every extraction was lost this way. Values are
+    converted only when the conversion is unambiguous; anything else is left as it is, and the
+    resolver's own checks then treat it as no decision.
+    """
+    if not isinstance(schema, dict) or not schema:
+        return value
+    types = schema.get("type")
+    types = set(types) if isinstance(types, list) else {types} if types else set()
+    if isinstance(value, str):
+        text = value.strip()
+        if text == "null" and "null" in types:
+            return None
+        if types & {"array", "object"} and text[:1] in "[{":
+            try:
+                decoded = json.loads(text)
+            except ValueError:
+                return value
+            if ("array" in types and isinstance(decoded, list)) or (
+                "object" in types and isinstance(decoded, dict)
+            ):
+                value = decoded
+        elif "integer" in types and re.fullmatch(r"-?\d+", text):
+            return int(text)
+        elif "number" in types and re.fullmatch(r"-?\d+(\.\d+)?", text):
+            return float(text)
+    elif isinstance(value, float) and "integer" in types and value.is_integer():
+        return int(value)
+    if isinstance(value, dict):
+        props = schema.get("properties") or {}
+        return {k: coerce_to_schema(v, props.get(k, {})) for k, v in value.items()}
+    if isinstance(value, list):
+        item_schema = schema.get("items") or {}
+        return [coerce_to_schema(v, item_schema) for v in value]
+    return value
 
 
 def _json_object(text: str) -> dict | None:
