@@ -1,5 +1,7 @@
 # reference-resolver-agent
 
+[![CI](https://github.com/flam7791/reference-resolver-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/flam7791/reference-resolver-agent/actions/workflows/ci.yml) [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE) ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)
+
 An auditable AI agent that turns messy bibliographic references into **verified links to the
 exact published work** (DOIs), and sends everything it is not sure about to a **human review
 queue** instead of guessing.
