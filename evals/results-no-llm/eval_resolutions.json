@@ -1,0 +1,949 @@
+[
+  {
+    "ref_id": "R001",
+    "raw": "OECD (2023), OECD Employment Outlook 2023: Artificial Intelligence and the Labour Market, OECD Publishing, Paris.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [
+      {
+        "identifier": "10.1787/3adf705b-en",
+        "label": "OECD (2024) OECD Digital Economy Outlook 2024 (Volume 2) In: OECD Digital Economy Outlook [10.1787/3adf705b-en]",
+        "score": 0.531,
+        "score_detail": {
+          "title": 0.351,
+          "year": 0.6,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1787/45f8d194-en",
+        "label": "OECD (2024) OECD Trust Survey 2023 Questionnaire in Slovenian In: Building trust in public institutions [10.1787/45f8d194-en]",
+        "score": 0.52,
+        "score_detail": {
+          "title": 0.333,
+          "year": 0.6,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1787/261ac7b2-en",
+        "label": "OECD (2024) Lessons from the 2023 OECD Trust Survey in Slovenia In: Building trust in public institutions [10.1787/261ac7b2-en]",
+        "score": 0.52,
+        "score_detail": {
+          "title": 0.333,
+          "year": 0.6,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2023",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.531 {'title': 0.351, 'year': 0.6, 'authors': 1.0}, runner-up 0.52"
+    ]
+  },
+  {
+    "ref_id": "R002",
+    "raw": "OCDE (2023), Perspectives de l'emploi de l'OCDE 2023 : Intelligence artificielle et marché du travail, Éditions OCDE, Paris.",
+    "status": "review",
+    "method": "none",
+    "identifier": "10.1787/a859bbac-fr",
+    "title": "Perspectives de l’emploi de l’OCDE 2024",
+    "confidence": 0.77,
+    "rationale": "Plausible match, but not certain enough to link.",
+    "candidates": [
+      {
+        "identifier": "10.1787/a859bbac-fr",
+        "label": "OCDE (2024) Perspectives de l’emploi de l’OCDE 2024 In: Perspectives de l'emploi de l'OCDE/OCDE perspectives de l'emploi [10.1787/a859bbac-fr]",
+        "score": 0.77,
+        "score_detail": {
+          "title": 0.75,
+          "year": 0.6,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1787/a0517600-fr",
+        "label": "OCDE (2023) Cadre d'action de l'OCDE sur la sécurité numérique [10.1787/a0517600-fr]",
+        "score": 0.595,
+        "score_detail": {
+          "title": 0.325,
+          "year": 1.0,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1787/6b161dcd-fr",
+        "label": "OCDE (2024) Examens de l'OCDE sur la coopération pour le développement : Slovénie 2024 In: Examens de l'OCDE sur la coopération pour le développement [10.1787/6b161dcd-fr]",
+        "score": 0.506,
+        "score_detail": {
+          "title": 0.31,
+          "year": 0.6,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2023",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.77 {'title': 0.75, 'year': 0.6, 'authors': 1.0}, runner-up 0.595"
+    ]
+  },
+  {
+    "ref_id": "R003",
+    "raw": "OECD (2005), OECD Employment Outlook 2005, OECD Publishing, Paris.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [
+      {
+        "identifier": "10.1787/1815199x",
+        "label": "OECD, OECD (2010) OECD Social, Employment and Migration Working Papers In: OECD social employment and migration working papers [10.1787/1815199x]",
+        "score": 0.524,
+        "score_detail": {
+          "title": 0.541,
+          "year": 0.0,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1787/23114886",
+        "label": "OECD (2014) OECD Employment Policy Papers In: OECD employment policy papers [10.1787/23114886]",
+        "score": 0.524,
+        "score_detail": {
+          "title": 0.539,
+          "year": 0.0,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1787/18151973",
+        "label": "OECD, OECD (2010) OECD Economics Department Working Papers In: OECD Economics Department working papers [10.1787/18151973]",
+        "score": 0.476,
+        "score_detail": {
+          "title": 0.46,
+          "year": 0.0,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2005",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.524 {'title': 0.541, 'year': 0.0, 'authors': 1.0}, runner-up 0.524"
+    ]
+  },
+  {
+    "ref_id": "R004",
+    "raw": "OECD (2019), Artificial intelligence in society, OECD Publishing, Paris.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [
+      {
+        "identifier": "10.1787/1815199x",
+        "label": "OECD, OECD (2010) OECD Social, Employment and Migration Working Papers In: OECD social employment and migration working papers [10.1787/1815199x]",
+        "score": 0.467,
+        "score_detail": {
+          "title": 0.444,
+          "year": 0.0,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.3917/e.jie.037.0117",
+        "label": "Bordot (2022) Artificial Intelligence, Robots and Unemployment: Evidence from OECD Countries In: Journal of Innovation Economics & Management [10.3917/e.jie.037.0117]",
+        "score": 0.33,
+        "score_detail": {
+          "title": 0.549,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.21121/eab.20260204",
+        "label": "Savaşkan (2025) Overcoming the Glass Ceiling Syndrome through Digitalization and Artificial Intelligence in OECD Countries In: Ege Akademik Bakis (Ege Academic Review) [10.21121/eab.20260204]",
+        "score": 0.3,
+        "score_detail": {
+          "title": 0.5,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2019",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.467 {'title': 0.444, 'year': 0.0, 'authors': 1.0}, runner-up 0.33"
+    ]
+  },
+  {
+    "ref_id": "R005",
+    "raw": "OECD (2015), Frascati Manual 2015: Guidelines for Collecting and Reporting Data on Research and Experimental Development, The Measurement of Scientific, Technological and Innovation Activities, OECD Publishing, Paris.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [
+      {
+        "identifier": "10.1787/fba501fc-en",
+        "label": "OECD (2025) Implications of software development for R&D measurement In: The Measurement of Scientific and Technological Activities [10.1787/fba501fc-en]",
+        "score": 0.5,
+        "score_detail": {
+          "title": 0.5,
+          "year": 0.0,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1787/f30547e7-en",
+        "label": "OECD (2023) OECD framework for mapping and quantifying government support for business innovation In: OECD science, technology and industry policy papers [10.1787/f30547e7-en]",
+        "score": 0.438,
+        "score_detail": {
+          "title": 0.396,
+          "year": 0.0,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1787/5jlv73sqqp8r-en",
+        "label": "Galindo‐Rueda, Verger (2016) OECD Taxonomy of Economic Activities Based on R&D Intensity In: OECD science, technology and industry working papers [10.1787/5jlv73sqqp8r-en]",
+        "score": 0.32,
+        "score_detail": {
+          "title": 0.333,
+          "year": 0.6,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2015",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.5 {'title': 0.5, 'year': 0.0, 'authors': 1.0}, runner-up 0.438"
+    ]
+  },
+  {
+    "ref_id": "R006",
+    "raw": "Acemoglu, D. and P. Restrepo (2020), \"Robots and jobs: Evidence from US labor markets\", Journal of Political Economy, Vol. 128/6, pp. 2188-2244.",
+    "status": "linked",
+    "method": "deterministic",
+    "identifier": "10.1086/705716",
+    "title": "Robots and Jobs: Evidence from US Labor Markets",
+    "confidence": 0.92,
+    "rationale": "High score, clear lead.",
+    "candidates": [
+      {
+        "identifier": "10.1086/705716",
+        "label": "Acemoğlu, Restrepo (2019) Robots and Jobs: Evidence from US Labor Markets In: Journal of Political Economy [10.1086/705716]",
+        "score": 0.92,
+        "score_detail": {
+          "title": 1.0,
+          "year": 0.6,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.3386/w23285",
+        "label": "Acemoğlu, Restrepo (2017) Robots and Jobs: Evidence from US Labor Markets In: National Bureau of Economic Research [10.3386/w23285]",
+        "score": 0.8,
+        "score_detail": {
+          "title": 1.0,
+          "year": 0.0,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.2139/ssrn.2940245",
+        "label": "Acemoğlu, Restrepo (2017) Robots and Jobs: Evidence from US Labor Markets In: SSRN Electronic Journal [10.2139/ssrn.2940245]",
+        "score": 0.8,
+        "score_detail": {
+          "title": 1.0,
+          "year": 0.0,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title='Robots and jobs: Evidence from US labor markets' year=2020",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.92 {'title': 1.0, 'year': 0.6, 'authors': 1.0}, runner-up 0.8"
+    ]
+  },
+  {
+    "ref_id": "R007",
+    "raw": "Autor, D. (2016), \"Why are there still so many jobs? The history and future of workplace automation\", Journal of Economic Perspectives, 29(3), 3-30.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "The scholarly databases could not be reached.",
+    "candidates": [],
+    "trace": [
+      "parsed by heuristic: title='Why are there still so many jobs? The history and future of workplace automation' year=2016",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex unavailable: api.openalex.org returned HTTP 400"
+    ]
+  },
+  {
+    "ref_id": "R008",
+    "raw": "Frey, C. B. and M. A. Osborne (2017), The future of employment: How susceptible are jobs to computerisation?, Technological Forecasting and Social Change, 114, 254-280, doi:10.1016/j.techfore.2016.08.091",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "The scholarly databases could not be reached.",
+    "candidates": [],
+    "trace": [
+      "parsed by heuristic: title=None year=2017",
+      "cited DOI 10.1016/j.techfore.2016.08.091 is not registered; searching instead",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex unavailable: api.openalex.org returned HTTP 400"
+    ]
+  },
+  {
+    "ref_id": "R009",
+    "raw": "Brynjolfsson, E., D. Li and L. Raymond (2025), Generative AI at work, Quarterly Journal of Economics.",
+    "status": "review",
+    "method": "none",
+    "identifier": "10.3386/w33795",
+    "title": "Shifting Work Patterns with Generative AI",
+    "confidence": 0.56,
+    "rationale": "Plausible match, but not certain enough to link.",
+    "candidates": [
+      {
+        "identifier": "10.3386/w33795",
+        "label": "Dillon, Jaffe, Immorlica et al. (2025) Shifting Work Patterns with Generative AI In: National Bureau of Economic Research [10.3386/w33795]",
+        "score": 0.56,
+        "score_detail": {
+          "title": 0.6,
+          "year": 1.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1080/07421222.2025.2487315",
+        "label": "Wessel, Adam, Benlian et al. (2025) Generative AI and its Transformative Value for Digital Platforms In: Journal of Management Information Systems [10.1080/07421222.2025.2487315]",
+        "score": 0.425,
+        "score_detail": {
+          "title": 0.374,
+          "year": 1.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.3386/w32966",
+        "label": "Bick, Blandin, Deming (2024) The Rapid Adoption of Generative AI In: National Bureau of Economic Research [10.3386/w32966]",
+        "score": 0.42,
+        "score_detail": {
+          "title": 0.5,
+          "year": 0.6,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2025",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.56 {'title': 0.6, 'year': 1.0, 'authors': 0.0}, runner-up 0.425"
+    ]
+  },
+  {
+    "ref_id": "R010",
+    "raw": "Noy, S., & Zhang, W. (2023). Experimental evidence on the productivity effects of generative artificial intelligence. Science, 381(6654), 187-192.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [
+      {
+        "identifier": "10.17705/1jais.00859",
+        "label": "Alavi, Leidner, Mousavi (2024) Knowledge Management Perspective of Generative Artificial Intelligence In: Journal of the Association for Information Systems [10.17705/1jais.00859]",
+        "score": 0.46,
+        "score_detail": {
+          "title": 0.567,
+          "year": 0.6,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1093/pnasnexus/pgae052",
+        "label": "Zhou, Lee (2024) Generative artificial intelligence, human creativity, and art In: PNAS Nexus [10.1093/pnasnexus/pgae052]",
+        "score": 0.42,
+        "score_detail": {
+          "title": 0.5,
+          "year": 0.6,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1111/bjet.13544",
+        "label": "Fan, Tang, Le et al. (2024) Beware of metacognitive laziness: Effects of generative artificial intelligence on learning motivation, processes, and performance In: British Journal of Educational Technology [10.1111/bjet.13544]",
+        "score": 0.408,
+        "score_detail": {
+          "title": 0.481,
+          "year": 0.6,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2023",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.46 {'title': 0.567, 'year': 0.6, 'authors': 0.0}, runner-up 0.42"
+    ]
+  },
+  {
+    "ref_id": "R011",
+    "raw": "Jobin A, Ienca M, Vayena E. The global landscape of AI ethics guidelines. Nat Mach Intell. 2019;1:389-399.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [
+      {
+        "identifier": "10.2196/55368",
+        "label": "Weidener, Fischer (2024) Proposing a Principle-Based Approach for Teaching AI Ethics in Medical Education In: JMIR Medical Education [10.2196/55368]",
+        "score": 0.24,
+        "score_detail": {
+          "title": 0.4,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.2196/62678",
+        "label": "Dunlap, Michalowski (2024) Advancing AI Data Ethics in Nursing: Future Directions for Nursing Practice, Research, and Education In: JMIR Nursing [10.2196/62678]",
+        "score": 0.24,
+        "score_detail": {
+          "title": 0.4,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.37871/jisdces1115",
+        "label": "Kriuk (2026) Integrating AI Ethics and Human–Computer Interaction: Toward Responsible and Human-Centered Intelligent Systems In: Journal of Interdisciplinary Social Digital Creative & Engineering Studies [10.37871/jisdces1115]",
+        "score": 0.211,
+        "score_detail": {
+          "title": 0.352,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2019",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.24 {'title': 0.4, 'year': 0.0, 'authors': 0.0}, runner-up 0.24"
+    ]
+  },
+  {
+    "ref_id": "R012",
+    "raw": "Floridi, L. et al. (2018), AI4People: an ethical framework for a good AI society, Minds and Machines, 28, 689-707.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [
+      {
+        "identifier": "10.1162/99608f92.8cd550d1",
+        "label": "Floridi, Cowls (2019) A Unified Framework of Five Principles for AI in Society In: Harvard Data Science Review [10.1162/99608f92.8cd550d1]",
+        "score": 0.52,
+        "score_detail": {
+          "title": 0.5,
+          "year": 0.6,
+          "authors": 0.5
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1007/s43681-023-00258-9",
+        "label": "Prem (2023) From ethical AI frameworks to tools: a review of approaches In: AI and Ethics [10.1007/s43681-023-00258-9]",
+        "score": 0.3,
+        "score_detail": {
+          "title": 0.5,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1109/tts.2020.2974991",
+        "label": "Peters, Vold, Robinson et al. (2020) Responsible AI—Two Frameworks for Ethical Design Practice In: IEEE Transactions on Technology and Society [10.1109/tts.2020.2974991]",
+        "score": 0.247,
+        "score_detail": {
+          "title": 0.412,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2018",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.52 {'title': 0.5, 'year': 0.6, 'authors': 0.5}, runner-up 0.3"
+    ]
+  },
+  {
+    "ref_id": "R013",
+    "raw": "Bender, E. M., Gebru, T., McMillan-Major, A. and Shmitchell, S. (2021), On the dangers of stochastic parrots: Can language models be too big?, Proceedings of FAccT '21, ACM.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "The scholarly databases could not be reached.",
+    "candidates": [],
+    "trace": [
+      "parsed by heuristic: title=None year=2021",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex unavailable: api.openalex.org returned HTTP 400"
+    ]
+  },
+  {
+    "ref_id": "R014",
+    "raw": "WILKINSON, M. D. ET AL. (2016). THE FAIR GUIDING PRINCIPLES FOR SCIENTIFIC DATA MANAGEMENT AND STEWARDSHIP. SCIENTIFIC DATA, 3, 160018.",
+    "status": "linked",
+    "method": "deterministic",
+    "identifier": "10.1038/sdata.2016.18",
+    "title": "The FAIR Guiding Principles for scientific data management and stewardship",
+    "confidence": 0.867,
+    "rationale": "High score, clear lead.",
+    "candidates": [
+      {
+        "identifier": "10.1038/sdata.2016.18",
+        "label": "Wilkinson, Dumontier, Aalbersberg et al. (2016) The FAIR Guiding Principles for scientific data management and stewardship In: Scientific Data [10.1038/sdata.2016.18]",
+        "score": 0.867,
+        "score_detail": {
+          "title": 1.0,
+          "year": 1.0,
+          "authors": 0.333
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1038/s41431-018-0160-0",
+        "label": "Boeckhout, Zielhuis, Bredenoord (2018) The FAIR guiding principles for data stewardship: fair enough? In: European Journal of Human Genetics [10.1038/s41431-018-0160-0]",
+        "score": 0.6,
+        "score_detail": {
+          "title": 1.0,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1007/978-3-031-48941-9_24",
+        "label": "Amaral, Cruz, Cruz (2024) Evaluating the FAIRness of Scientific Data Repositories [10.1007/978-3-031-48941-9_24]",
+        "score": 0.261,
+        "score_detail": {
+          "title": 0.436,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2016",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.867 {'title': 1.0, 'year': 1.0, 'authors': 0.333}, runner-up 0.6"
+    ]
+  },
+  {
+    "ref_id": "R015",
+    "raw": "Model cards for model reporting. M. Mitchell, S. Wu, A. Zaldivar et al. In Proceedings of the Conference on Fairness, Accountability, and Transparency, 2019.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [
+      {
+        "identifier": "10.48550/arxiv.2412.13151",
+        "label": "Everitt, Ji (2024) Model Cards for Quantum Technologies Reporting In: arXiv (Cornell University) [10.48550/arxiv.2412.13151]",
+        "score": 0.36,
+        "score_detail": {
+          "title": 0.6,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.48550/arxiv.2402.16268",
+        "label": "Bommasani, Klyman, Longpre et al. (2024) Foundation Model Transparency Reports In: arXiv (Cornell University) [10.48550/arxiv.2402.16268]",
+        "score": 0.3,
+        "score_detail": {
+          "title": 0.5,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.2196/50048",
+        "label": "Singhal, Neveditsin, Tanveer et al. (2024) Toward Fairness, Accountability, Transparency, and Ethics in AI for Social Media and Health Care: Scoping Review In: JMIR Medical Informatics [10.2196/50048]",
+        "score": 0.211,
+        "score_detail": {
+          "title": 0.351,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2019",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.36 {'title': 0.6, 'year': 0.0, 'authors': 0.0}, runner-up 0.3"
+    ]
+  },
+  {
+    "ref_id": "R016",
+    "raw": "Gebru, T. et al. (2021), \"Datasheets for datasets\", Communications of the ACM, 64(12), 86-92.",
+    "status": "linked",
+    "method": "deterministic",
+    "identifier": "10.1145/3458723",
+    "title": "Datasheets for datasets",
+    "confidence": 0.867,
+    "rationale": "High score, clear lead.",
+    "candidates": [
+      {
+        "identifier": "10.1145/3458723",
+        "label": "Gebru, Morgenstern, Vecchione et al. (2021) Datasheets for datasets In: Communications of the ACM [10.1145/3458723]",
+        "score": 0.867,
+        "score_detail": {
+          "title": 1.0,
+          "year": 1.0,
+          "authors": 0.333
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1201/9781003278290-23",
+        "label": "Gebru, Morgenstern, Vecchione et al. (2022) Excerpt from Datasheets for Datasets * In: Auerbach Publications eBooks [10.1201/9781003278290-23]",
+        "score": 0.654,
+        "score_detail": {
+          "title": 0.78,
+          "year": 0.6,
+          "authors": 0.333
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.48550/arxiv.2005.13156",
+        "label": "Costa‐jussà, Creus, Oriol et al. (2020) MT-Adapted Datasheets for Datasets: Template and Repository In: arXiv (Cornell University) [10.48550/arxiv.2005.13156]",
+        "score": 0.604,
+        "score_detail": {
+          "title": 0.807,
+          "year": 0.6,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title='Datasheets for datasets' year=2021",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.867 {'title': 1.0, 'year': 1.0, 'authors': 0.333}, runner-up 0.654"
+    ]
+  },
+  {
+    "ref_id": "R017",
+    "raw": "Robertson, S. and H. Zaragoza (2009), The probabilistic relevance framework: BM25 and beyond, Foundations and Trends in Information Retrieval, 3(4), 333-389.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [
+      {
+        "identifier": "10.15488/20128",
+        "label": "Rathee (2025) Relevance Estimation Techniques for Information Retrieval In: Institutional Repository of Leibniz Universität Hannover (Leibniz Universität Hannover) [10.15488/20128]",
+        "score": 0.36,
+        "score_detail": {
+          "title": 0.6,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.5120/ijca6a8da113498f",
+        "label": "Kapadia, Joshi (2026) Comparative Performance Analysis of BM25 and Vector Space Model for Document Retrieval in Gujarati News Corpora In: International Journal of Computer Applications [10.5120/ijca6a8da113498f]",
+        "score": 0.239,
+        "score_detail": {
+          "title": 0.398,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.48550/arxiv.2607.26497",
+        "label": "Wang, Xu, Wang et al. (2026) BM25 Wins at Scale: A Scaling Study of Retrieval-Augmented Generation Paradigms In: arXiv (Cornell University) [10.48550/arxiv.2607.26497]",
+        "score": 0.2,
+        "score_detail": {
+          "title": 0.333,
+          "year": 0.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2009",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.36 {'title': 0.6, 'year': 0.0, 'authors': 0.0}, runner-up 0.239"
+    ]
+  },
+  {
+    "ref_id": "R018",
+    "raw": "Available at: https://doi.org/10.1038/s42256-019-0088-2",
+    "status": "linked",
+    "method": "doi_in_text",
+    "identifier": "10.1038/s42256-019-0088-2",
+    "title": "The global landscape of AI ethics guidelines",
+    "confidence": 0.99,
+    "rationale": "DOI given in the citation, confirmed against the registry.",
+    "candidates": [],
+    "trace": [
+      "parsed by heuristic: title=None year=None",
+      "citation is only a DOI; registered record used"
+    ]
+  },
+  {
+    "ref_id": "R019",
+    "raw": "Aurora Institute (2025), Internal note on generative AI tooling, unpublished.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [
+      {
+        "identifier": "10.1016/j.techfore.2026.124719",
+        "label": "Smolka, Neudert, Böschen et al. (2026) Categorizing realist, critical, and pragmatist perspectives on innovation ecosystems: A research agenda and an initial application to artificial intelligence In: Technological Forecasting and Social Change [10.1016/j.techfore.2026.124719]",
+        "score": 0.33,
+        "score_detail": {
+          "title": 0.351,
+          "year": 0.6,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.3390/nu18071040",
+        "label": "Papandreou, Alsuwaidi, Taha et al. (2026) A Critical Narrative Review Appraisal of the 2025–2030 Dietary Guidelines: Scientific Strengths, Conceptual Gaps, and Overlooked Dimensions of Sustainability and Health Equity In: Nutrients [10.3390/nu18071040]",
+        "score": 0.319,
+        "score_detail": {
+          "title": 0.331,
+          "year": 0.6,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1145/3805689.3812258",
+        "label": "Savage, Nava, Zhou et al. (2026) How Formerly Incarcerated People Envision Technologies for Prison Parole [10.1145/3805689.3812258]",
+        "score": 0.312,
+        "score_detail": {
+          "title": 0.319,
+          "year": 0.6,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2025",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.33 {'title': 0.351, 'year': 0.6, 'authors': 0.0}, runner-up 0.319"
+    ]
+  },
+  {
+    "ref_id": "R020",
+    "raw": "Martin, J. (2024), personal communication with the author, 12 March, Paris.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [
+      {
+        "identifier": "https://openalex.org/W7209522356",
+        "label": "(no author) (2024) Current Developments in Arctic Law. Vol. 12 (2024) In: Lauda (University of Lapland) [https://openalex.org/W7209522356]",
+        "score": 0.471,
+        "score_detail": {
+          "title": 0.286,
+          "year": 1.0,
+          "authors": 0.5
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.51936/9789612951207",
+        "label": "Acuti, Glozer, Crane et al. (2025) CSR Communication Conference 2024: Conference Proceedings [10.51936/9789612951207]",
+        "score": 0.42,
+        "score_detail": {
+          "title": 0.5,
+          "year": 0.6,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1144/geosci-34-4",
+        "label": "(no author) (2024) Winter 2024 In: Geoscientist [10.1144/geosci-34-4]",
+        "score": 0.408,
+        "score_detail": {
+          "title": 0.179,
+          "year": 1.0,
+          "authors": 0.5
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2024",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.471 {'title': 0.286, 'year': 1.0, 'authors': 0.5}, runner-up 0.42"
+    ]
+  },
+  {
+    "ref_id": "R021",
+    "raw": "OECD.AI Policy Observatory (n.d.), Live data on AI, https://oecd.ai (accessed 1 September 2026).",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [
+      {
+        "identifier": "10.1201/9781003642350",
+        "label": "Yarberry, Ladd (2026) Practical AI for Professionals [10.1201/9781003642350]",
+        "score": 0.4,
+        "score_detail": {
+          "title": 0.333,
+          "year": 1.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.1787/835641c9-en",
+        "label": "OECD (2023) The state of implementation of the OECD AI Principles four years on In: OECD artificial intelligence papers [10.1787/835641c9-en]",
+        "score": 0.371,
+        "score_detail": {
+          "title": 0.286,
+          "year": 0.0,
+          "authors": 1.0
+        },
+        "source": "openalex"
+      },
+      {
+        "identifier": "10.48550/arxiv.2604.24794",
+        "label": "Sharma, Krishnagiri, Dudas et al. (2026) V.O.I.C.E (Voice, Ownership, Identity, Control, Expression): Risk Taxonomy of Synthetic Voice Generation From Empirical Data In: arXiv (Cornell University) [10.48550/arxiv.2604.24794]",
+        "score": 0.354,
+        "score_detail": {
+          "title": 0.256,
+          "year": 1.0,
+          "authors": 0.0
+        },
+        "source": "openalex"
+      }
+    ],
+    "trace": [
+      "parsed by heuristic: title=None year=2026",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 5 candidates",
+      "top score 0.4 {'title': 0.333, 'year': 1.0, 'authors': 0.0}, runner-up 0.371"
+    ]
+  },
+  {
+    "ref_id": "R022",
+    "raw": "Rossi, L. and A. Moreau (2024), Agentic workflows in multilateral secretariats: a field guide, Aurora Institute Working Paper No. 7.",
+    "status": "unresolved",
+    "method": "none",
+    "identifier": null,
+    "title": null,
+    "confidence": 0.0,
+    "rationale": "No plausible registered work found.",
+    "candidates": [],
+    "trace": [
+      "parsed by heuristic: title=None year=2024",
+      "crossref unavailable: api.crossref.org returned HTTP 400",
+      "openalex: 0 candidates"
+    ]
+  }
+]

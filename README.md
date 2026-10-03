@@ -124,6 +124,49 @@ precision or on any false link. Details are in [evals/README.md](evals/README.md
 
 Run it with and without `--no-llm` to see what the model steps add, and at what cost.
 
+### Results (live run, October 2026)
+
+With Claude Sonnet 5 (`claude-sonnet-5`), search agent on. CI replays this run on every push.
+
+| Metric | Value |
+|---|---|
+| References | 22 |
+| Precision of automatic links | 1.00 |
+| Recall (resolvable, linked correctly) | 0.72 |
+| Wrong links | 0 |
+| False links on unresolvable items | 0 |
+| Sent to review | 3 (14%) |
+| Review items with the answer among suggestions | 0 |
+| Unresolved | 6 |
+| Model cost | $0.2123 ($0.00965/ref) |
+
+Deterministic steps only (`--no-llm`), same references:
+
+| Metric | Value |
+|---|---|
+| References | 22 |
+| Precision of automatic links | 1.00 |
+| Recall (resolvable, linked correctly) | 0.22 |
+| Wrong links | 0 |
+| False links on unresolvable items | 0 |
+| Sent to review | 2 (9%) |
+| Review items with the answer among suggestions | 0 |
+| Unresolved | 16 |
+| Model cost | $0.0000 ($0.00000/ref) |
+
+What this shows:
+
+- **The model earns its place.** Without it, precision is perfect but only about a fifth of the
+  resolvable references get linked; with it, about three quarters do, for about one US cent per
+  reference.
+- **The evaluation caught a real failure mode.** In the first live run precision was 0.93,
+  below the 0.95 gate: the Frascati Manual was linked to a university-repository copy in
+  OpenAlex, a record without a DOI, instead of the published version. The fix is a rule, not a
+  prompt: a match without a DOI now goes to review. The tables above are after that fix.
+- **What is still missed:** a citation whose year is off by one, a citation with a mistyped DOI,
+  and a title whose subtitle the registry stores separately. They end up unresolved or in review,
+  never wrongly linked; better query reformulation in the agent is the next step.
+
 ## Configuration
 
 | Variable | Default | Purpose |

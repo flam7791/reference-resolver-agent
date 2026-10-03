@@ -270,3 +270,28 @@ def test_offline_replay_gaps_fail_loudly_instead_of_changing_results(settings, t
     resolver = make_resolver(settings, llm=replay_only)
     with pytest.raises(ReplayMiss):
         resolver.parse(["Autor, D. (2015), Why are there still so many jobs?"])
+
+
+def test_a_match_without_a_doi_goes_to_review_not_to_a_link(settings):
+    # First live evaluation: a repository copy of an OECD manual (OpenAlex record, no DOI)
+    # was linked instead of the published version. Records without a DOI are now reviewed.
+    copy = cand(
+        "https://openalex.org/W2743915155",
+        "Frascati Manual 2015: Guidelines for Collecting and Reporting Data on Research and "
+        "Experimental Development",
+        ["OECD"],
+        2015,
+        source="openalex",
+    )
+    openalex = FakeSource("openalex", {"frascati": [copy]})
+    resolver = make_resolver(settings, openalex=openalex)  # no model
+    ref = resolver.parse(
+        [
+            "OECD (2015), Frascati Manual 2015: Guidelines for Collecting and Reporting Data on "
+            "Research and Experimental Development, OECD Publishing, Paris."
+        ]
+    )[0]
+    res = resolver.resolve(ref)
+    assert res.status == "review" and res.identifier == copy.identifier
+    assert "no DOI" in res.rationale
+    assert any("sent to review instead of linking" in step for step in res.trace)

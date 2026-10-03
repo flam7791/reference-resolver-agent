@@ -1,0 +1,1 @@
+{"content": [{"type": "tool_use", "id": "toolu_01WbdAwaoyJF1U7HWqcFszZ7", "name": "search_openalex", "input": {"query": "OECD Employment Outlook 2023"}}], "tool_calls": [{"id": "toolu_01WbdAwaoyJF1U7HWqcFszZ7", "name": "search_openalex", "input": {"query": "OECD Employment Outlook 2023"}}], "text": "", "input_tokens": 2554, "output_tokens": 51, "cached": false}

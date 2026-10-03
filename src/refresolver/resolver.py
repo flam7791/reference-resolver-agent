@@ -287,13 +287,30 @@ class Resolver:
                 trace=trace,
             )
 
+        def link(method, cand, confidence, rationale):
+            # The output of this tool is a DOI. A record without one is often a repository copy
+            # or a duplicate of a work that does have a DOI (found in the first live evaluation:
+            # a university-repository copy of an OECD manual). A person confirms those.
+            if not cand.doi:
+                trace.append(f"{cand.identifier} has no DOI: sent to review instead of linking")
+                return outcome(
+                    "review",
+                    method,
+                    cand,
+                    confidence,
+                    (rationale + " " if rationale else "")
+                    + "The match has no DOI (often a repository copy or a duplicate record), "
+                    "so a person should confirm it or find the published version.",
+                )
+            return outcome("linked", method, cand, confidence, rationale)
+
         if not groups:  # every source failed: say so, rather than "not found"
             return outcome(
                 "unresolved", "none", rationale="The scholarly databases could not be reached."
             )
 
         if top and top.score >= s.auto_accept and top.score - runner_up >= s.min_margin:
-            return outcome("linked", "deterministic", top, top.score, "High score, clear lead.")
+            return link("deterministic", top, top.score, "High score, clear lead.")
 
         # 3. Model adjudication for plausible but ambiguous cases.
         model_rationale = ""
@@ -303,9 +320,7 @@ class Resolver:
             if choice:
                 chosen = candidates[choice - 1]
                 if confidence >= s.llm_accept and chosen.score >= s.review_floor:
-                    return outcome(
-                        "linked", "llm_adjudication", chosen, confidence, model_rationale
-                    )
+                    return link("llm_adjudication", chosen, confidence, model_rationale)
                 return outcome("review", "llm_adjudication", chosen, confidence, model_rationale)
 
         # 4. Search agent for what is left.
@@ -315,12 +330,9 @@ class Resolver:
                 cand, confidence, rationale = proposal
                 score(ref, cand)
                 trace.append(f"agent proposal scores {cand.score} {cand.score_detail}")
-                status = (
-                    "linked"
-                    if confidence >= s.llm_accept and cand.score >= s.review_floor
-                    else "review"
-                )
-                return outcome(status, "agent_search", cand, confidence, rationale)
+                if confidence >= s.llm_accept and cand.score >= s.review_floor:
+                    return link("agent_search", cand, confidence, rationale)
+                return outcome("review", "agent_search", cand, confidence, rationale)
 
         # 5. Human review, or unresolved.
         if top and top.score >= s.review_floor:
