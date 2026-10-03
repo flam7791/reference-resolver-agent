@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "reference-resolver-agent"
-version = "0.1.0"
+version = "0.2.0"
 description = "An auditable agent that resolves messy bibliographic references to registered works (DOIs), with confidence thresholds and a human review queue."
 readme = "README.md"
 license = "MIT"

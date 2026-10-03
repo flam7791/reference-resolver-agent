@@ -64,7 +64,7 @@ Requires Python 3.10+.
 python -m venv .venv
 # Windows (PowerShell): .venv\Scripts\Activate.ps1      macOS/Linux: source .venv/bin/activate
 pip install -e ".[dev]"
-pytest                                          # 52 offline tests, no API key needed
+pytest                                          # 70 offline tests, no API key needed
 
 # Deterministic steps only: no key, no cost
 refresolver run examples/aurora_working_paper.md --no-llm --out out/
@@ -75,6 +75,26 @@ export REFRESOLVER_CONTACT_EMAIL=you@example.org
 refresolver run examples/aurora_working_paper.md --out out/
 refresolver cite "Autor, D. (2016), Why are there still so many jobs?, JEP"
 ```
+
+### With a local open-weight model (no key, nothing leaves the machine)
+
+The model steps also run on any OpenAI-compatible endpoint: a local model through
+[Ollama](https://ollama.com), vLLM or llama.cpp, or an LLM gateway such as
+[governed-llm-gateway](https://github.com/flam7791/governed-llm-gateway).
+
+```bash
+ollama pull qwen2.5:7b                           # or llama3.1:8b; any model with tool calling
+export REFRESOLVER_PROVIDER=openai_compatible    # PowerShell: $env:REFRESOLVER_PROVIDER="openai_compatible"
+export REFRESOLVER_MODEL=qwen2.5:7b
+export REFRESOLVER_PRICE_INPUT=0 REFRESOLVER_PRICE_OUTPUT=0
+refresolver run examples/aurora_working_paper.md --out out-local/
+refresolver eval evals/gold_references.jsonl --cache-dir evals/recordings-local --out evals/results-local
+```
+
+Small local models do not always honour a forced tool call. The adapter then accepts a JSON
+object from the text reply, and anything else counts as "no decision", which sends the
+reference to the review queue rather than linking it: a weaker model lowers automation, not
+precision. Compare the three result folders to see the trade-off.
 
 A run writes three files to the output folder:
 
@@ -177,7 +197,10 @@ What the live runs taught, in order:
 | Variable | Default | Purpose |
 |---|---|---|
 | `ANTHROPIC_API_KEY` | none | Enables the model steps. Without it, the deterministic pipeline still runs. |
-| `REFRESOLVER_MODEL` | `claude-sonnet-5` | Any Claude model. A smaller model lowers cost; compare them on the gold set. |
+| `REFRESOLVER_PROVIDER` | `anthropic` | or `openai_compatible` (Ollama, vLLM, llama.cpp, an LLM gateway) |
+| `REFRESOLVER_MODEL` | `claude-sonnet-5` | The model or deployment name. Compare models on the gold set. |
+| `REFRESOLVER_BASE_URL` | `http://localhost:11434/v1` | OpenAI-compatible endpoint (Ollama by default) |
+| `REFRESOLVER_API_KEY` | none | Only if the endpoint needs one (a gateway or cloud); a local model does not |
 | `REFRESOLVER_PRICE_INPUT` / `_OUTPUT` | `2.0` / `10.0` | USD per million tokens, for the cost report. |
 | `REFRESOLVER_AUTO_ACCEPT` | `0.85` | Deterministic score for a link without the model |
 | `REFRESOLVER_MIN_MARGIN` | `0.05` | Required lead over the runner-up |

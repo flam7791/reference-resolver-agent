@@ -2,6 +2,10 @@
 
 The resolver talks to a small `LLMClient` interface, not to a vendor SDK directly:
 - `AnthropicClient` calls Claude through the official SDK;
+- `OpenAICompatibleClient` calls any OpenAI-compatible endpoint: a local open-weight model
+  through Ollama, vLLM or llama.cpp, an LLM gateway, or a cloud deployment. It translates the
+  resolver's Messages-style requests (tool use, tool results) to the chat-completions format
+  and back, so the resolver code does not change;
 - `RecordingClient` wraps any client with a disk cache, so a run can be replayed offline with
   identical model answers (reproducible evaluations, no cost for repeats);
 - tests use a scripted fake client, so every decision path is tested without an API key.
@@ -122,6 +126,147 @@ class AnthropicClient:
             input_tokens=response.usage.input_tokens,
             output_tokens=response.usage.output_tokens,
         )
+
+
+class OpenAICompatibleClient:
+    """Any OpenAI-compatible chat endpoint, with tool calling.
+
+    Requests and replies keep the resolver's Messages-style shape (content blocks, `tool_use`,
+    `tool_result`); only this class knows the chat-completions format. Small local models do not
+    always honour a forced tool choice: when a tool was required and the reply is plain text, a
+    JSON object in that text is accepted as the tool's input, and anything else is returned as
+    text, which the resolver already treats as "no decision".
+    """
+
+    def __init__(
+        self, base_url: str, model: str, api_key: str = "", timeout: float = 300.0, http_client=None
+    ):
+        import httpx
+
+        self.model = model
+        self.url = base_url.rstrip("/") + "/chat/completions"
+        headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
+        self.http = http_client or httpx.Client(timeout=timeout, headers=headers)
+
+    @staticmethod
+    def to_chat(system: str, messages: list[dict]) -> list[dict]:
+        out = [{"role": "system", "content": system}]
+        for m in messages:
+            content = m["content"]
+            if isinstance(content, str):
+                out.append({"role": m["role"], "content": content})
+                continue
+            if m["role"] == "assistant":
+                text = "\n".join(b["text"] for b in content if b.get("type") == "text")
+                calls = [
+                    {
+                        "id": b["id"],
+                        "type": "function",
+                        "function": {"name": b["name"], "arguments": json.dumps(b["input"])},
+                    }
+                    for b in content
+                    if b.get("type") == "tool_use"
+                ]
+                msg = {"role": "assistant", "content": text or None}
+                if calls:
+                    msg["tool_calls"] = calls
+                out.append(msg)
+                continue
+            texts = []
+            for b in content:  # user turn: tool results become "tool" messages
+                if b.get("type") == "tool_result":
+                    body = b.get("content", "")
+                    if isinstance(body, list):
+                        body = "\n".join(x.get("text", "") for x in body if isinstance(x, dict))
+                    if b.get("is_error"):
+                        body = f"ERROR: {body}"
+                    out.append({"role": "tool", "tool_call_id": b["tool_use_id"], "content": body})
+                elif b.get("type") == "text":
+                    texts.append(b["text"])
+            if texts:
+                out.append({"role": "user", "content": "\n".join(texts)})
+        return out
+
+    @staticmethod
+    def to_tools(tools: list[dict]) -> list[dict]:
+        return [
+            {
+                "type": "function",
+                "function": {
+                    "name": t["name"],
+                    "description": t.get("description", ""),
+                    "parameters": t.get("input_schema", {"type": "object"}),
+                },
+            }
+            for t in tools
+        ]
+
+    @staticmethod
+    def to_tool_choice(choice: dict | None):
+        if not choice or choice.get("type") == "auto":
+            return "auto"
+        if choice.get("type") == "any":
+            return "required"
+        return {"type": "function", "function": {"name": choice["name"]}}
+
+    def create(self, *, system, messages, tools, tool_choice=None, max_tokens=2000) -> LLMReply:
+        body = {
+            "model": self.model,
+            "messages": self.to_chat(system, messages),
+            "max_tokens": max_tokens,
+            "temperature": 0,
+        }
+        if tools:
+            body["tools"] = self.to_tools(tools)
+            body["tool_choice"] = self.to_tool_choice(tool_choice)
+        response = self.http.post(self.url, json=body)
+        response.raise_for_status()
+        data = response.json()
+        message = data["choices"][0]["message"]
+        text = message.get("content") or ""
+        calls = []
+        for i, c in enumerate(message.get("tool_calls") or []):
+            fn = c.get("function", {})
+            args = fn.get("arguments") or "{}"
+            try:
+                parsed = json.loads(args) if isinstance(args, str) else dict(args)
+            except ValueError:
+                continue  # malformed arguments: treated as no call
+            calls.append(ToolCall(c.get("id") or f"call_{i}", fn.get("name", ""), parsed))
+        forced = tool_choice and tool_choice.get("type") == "tool"
+        if not calls and forced and text:
+            parsed = _json_object(text)
+            if parsed is not None:
+                calls.append(ToolCall("call_text_0", tool_choice["name"], parsed))
+        content = [{"type": "text", "text": text}] if text else []
+        content += [
+            {"type": "tool_use", "id": c.id, "name": c.name, "input": c.input} for c in calls
+        ]
+        usage = data.get("usage") or {}
+        return LLMReply(
+            content=content,
+            tool_calls=calls,
+            text=text,
+            input_tokens=int(usage.get("prompt_tokens", 0)),
+            output_tokens=int(usage.get("completion_tokens", 0)),
+        )
+
+
+def _json_object(text: str) -> dict | None:
+    """The first JSON object in a text reply (models sometimes wrap it in a code fence)."""
+    start = text.find("{")
+    while start != -1:
+        depth = 0
+        for end in range(start, len(text)):
+            depth += {"{": 1, "}": -1}.get(text[end], 0)
+            if depth == 0:
+                try:
+                    value = json.loads(text[start : end + 1])
+                except ValueError:
+                    break
+                return value if isinstance(value, dict) else None
+        start = text.find("{", start + 1)
+    return None
 
 
 class RecordingClient:

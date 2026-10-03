@@ -14,8 +14,13 @@ from pathlib import Path
 
 @dataclass(frozen=True)
 class Settings:
-    # Model. The API key is read by the Anthropic SDK from ANTHROPIC_API_KEY.
+    # Model. "anthropic": Claude through the SDK, key from ANTHROPIC_API_KEY.
+    # "openai_compatible": any OpenAI-compatible endpoint, e.g. a local open-weight model through
+    # Ollama (base URL http://localhost:11434/v1, no key), vLLM, or an LLM gateway.
+    provider: str = "anthropic"
     model: str = "claude-sonnet-5"
+    base_url: str = "http://localhost:11434/v1"
+    api_key: str = ""
     use_llm: bool = True
     # Prices in USD per million tokens, for the cost report. Check current prices.
     price_input_per_mtok: float = 2.0
@@ -44,7 +49,10 @@ class Settings:
             return env.get(name, str(default)).strip().lower() in ("1", "true", "yes", "on")
 
         return cls(
+            provider=env.get("REFRESOLVER_PROVIDER", d.provider).strip().lower(),
             model=env.get("REFRESOLVER_MODEL", d.model),
+            base_url=env.get("REFRESOLVER_BASE_URL", d.base_url),
+            api_key=env.get("REFRESOLVER_API_KEY", d.api_key),
             use_llm=flag("REFRESOLVER_USE_LLM", d.use_llm),
             price_input_per_mtok=float(env.get("REFRESOLVER_PRICE_INPUT", d.price_input_per_mtok)),
             price_output_per_mtok=float(
