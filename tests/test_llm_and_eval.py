@@ -134,3 +134,12 @@ def test_a_recorded_run_replays_offline_with_identical_results(tmp_path):
 
     assert first.correct_links == second.correct_links == 1
     assert [r.to_dict() for r in first_res] == [r.to_dict() for r in second_res]
+
+
+def test_a_run_where_a_database_failed_does_not_pass_the_gate():
+    failed = res("linked", "10.1/a")
+    failed.trace = ["crossref unavailable: api.crossref.org returned HTTP 400"]
+    result = score_resolutions([{"id": "a", "expected": "10.1/a"}], [failed])
+    assert result.precision == 1.0 and result.source_errors == 1
+    assert not result.passed(0.95)  # it measured the outage, not the resolver
+    assert "| Source errors (searches that failed) | 1 |" in result.table()

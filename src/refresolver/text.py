@@ -39,8 +39,15 @@ def find_quoted_title(text: str) -> str | None:
     return match.group(1).strip(" ,.") if match else None
 
 
+_ACCESSED = re.compile(
+    r"\b(accessed|retrieved|consulted|viewed|last visited)\b[^)\]]*", re.IGNORECASE
+)
+
+
 def find_year(text: str) -> int | None:
-    match = _YEAR.search(text)
+    """The publication year: the first plausible year, ignoring access dates of web pages
+    ("accessed 1 September 2026" says when someone read it, not when it was published)."""
+    match = _YEAR.search(_ACCESSED.sub(" ", text))
     return int(match.group(1)) if match else None
 
 

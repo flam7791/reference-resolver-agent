@@ -129,3 +129,49 @@ def test_contact_email_is_sent_for_the_polite_pool(settings):
     CrossrefSource(fetcher_with(polite, handler)).search("anything")
     assert "mailto:me@example.org" in seen["ua"]
     assert "mailto=me%40example.org" in seen["url"]
+
+
+def test_crossref_search_asks_only_for_fields_crossref_accepts(settings):
+    seen = []
+
+    def handler(request):
+        seen.append(request.url.params["select"])
+        return httpx.Response(200, json={"message": {"items": []}})
+
+    CrossrefSource(fetcher_with(settings, handler)).search("anything")
+    # "language" is not accepted in select: asking for it made every search fail (HTTP 400).
+    assert "language" not in seen[0].split(",")
+
+
+def test_openalex_search_drops_wildcard_characters(settings):
+    seen = []
+
+    def handler(request):
+        seen.append(request.url.params["search"])
+        return httpx.Response(200, json={"results": []})
+
+    OpenAlexSource(fetcher_with(settings, handler)).search(
+        "Why are there still so many jobs? The history*"
+    )
+    assert seen == ["Why are there still so many jobs The history"]
+
+
+def test_rejected_requests_are_recorded_and_replayed_as_rejections(settings):
+    from dataclasses import replace
+
+    from refresolver.fetch import RequestRejected
+
+    calls = []
+
+    def handler(request):
+        calls.append(1)
+        return httpx.Response(400, json={"message": "bad request"})
+
+    fetcher = fetcher_with(settings, handler)
+    with pytest.raises(RequestRejected):
+        fetcher.get_json("https://api.crossref.org/works", {"query.bibliographic": "x"})
+    assert len(calls) == 1  # a rejection is not retried
+
+    offline = JsonFetcher(replace(settings, offline=True), client=fetcher.client)
+    with pytest.raises(RequestRejected):  # replayed as the same failure, not a cache miss
+        offline.get_json("https://api.crossref.org/works", {"query.bibliographic": "x"})

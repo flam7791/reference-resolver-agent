@@ -10,6 +10,7 @@ Both APIs are free and public; a contact email in the settings is good manners.
 
 from __future__ import annotations
 
+import re
 from typing import Protocol
 
 from .fetch import JsonFetcher
@@ -17,10 +18,12 @@ from .models import Candidate
 
 CROSSREF = "https://api.crossref.org/works"
 OPENALEX = "https://api.openalex.org/works"
-# Ask only for the fields we read: smaller, faster responses (and smaller recordings).
+# Ask only for the fields we read: smaller, faster responses (and smaller recordings). Every
+# field must be one Crossref accepts in `select`: a single field it does not accept makes it
+# reject the whole search with HTTP 400. ("language" did, in the first live run.)
 CROSSREF_FIELDS = (
     "DOI,title,subtitle,author,issued,published-print,published-online,created,"
-    "container-title,publisher,type,language"
+    "container-title,publisher,type"
 )
 OPENALEX_FIELDS = (
     "id,doi,title,display_name,publication_year,type,language,authorships,primary_location"
@@ -132,6 +135,12 @@ def openalex_candidate(work: dict) -> Candidate:
     )
 
 
+def openalex_query(text: str) -> str:
+    """OpenAlex rejects search text containing wildcard characters (HTTP 400), and titles such as
+    "Why are there still so many jobs?" contain them. They carry no meaning for the search."""
+    return " ".join(re.sub(r"[?*]", " ", text).split())
+
+
 class OpenAlexSource:
     name = "openalex"
 
@@ -139,7 +148,11 @@ class OpenAlexSource:
         self.fetcher = fetcher
 
     def search(self, query: str, rows: int = 5) -> list[Candidate]:
-        params: dict = {"search": query[:300], "per_page": rows, "select": OPENALEX_FIELDS}
+        params: dict = {
+            "search": openalex_query(query)[:300],
+            "per_page": rows,
+            "select": OPENALEX_FIELDS,
+        }
         if self.fetcher.settings.contact_email:
             params["mailto"] = self.fetcher.settings.contact_email
         if self.fetcher.settings.openalex_api_key:

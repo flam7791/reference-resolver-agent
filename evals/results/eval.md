@@ -6,16 +6,14 @@ Model: claude-sonnet-5; agent: on.
 |---|---|
 | References | 22 |
 | Precision of automatic links | 1.00 |
-| Recall (resolvable, linked correctly) | 0.72 |
+| Recall (resolvable, linked correctly) | 1.00 |
 | Wrong links | 0 |
 | False links on unresolvable items | 0 |
-| Sent to review | 3 (14%) |
+| Sent to review | 2 (9%) |
 | Review items with the answer among suggestions | 0 |
-| Unresolved | 6 |
-| Model cost | $0.2123 ($0.00965/ref) |
+| Unresolved | 2 |
+| Source errors (searches that failed) | 0 |
+| Model cost | $0.0851 ($0.00387/ref) |
 
 ## Errors
 
-- {"id": "g07", "error": "missed", "expected": "10.1257/jep.29.3.3"}
-- {"id": "g08", "error": "missed", "expected": "10.1016/j.techfore.2016.08.019"}
-- {"id": "g13", "error": "missed", "expected": "10.1145/3442188.3445922"}

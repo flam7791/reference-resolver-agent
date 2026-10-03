@@ -126,19 +126,21 @@ Run it with and without `--no-llm` to see what the model steps add, and at what 
 
 ### Results (live run, October 2026)
 
-With Claude Sonnet 5 (`claude-sonnet-5`), search agent on. CI replays this run on every push.
+With Claude Sonnet 5 (`claude-sonnet-5`), search agent on. CI replays this run on every push
+and fails below 0.95 precision, on any false link, or if any database search failed.
 
 | Metric | Value |
 |---|---|
 | References | 22 |
 | Precision of automatic links | 1.00 |
-| Recall (resolvable, linked correctly) | 0.72 |
+| Recall (resolvable, linked correctly) | 1.00 |
 | Wrong links | 0 |
 | False links on unresolvable items | 0 |
-| Sent to review | 3 (14%) |
+| Sent to review | 2 (9%) |
 | Review items with the answer among suggestions | 0 |
-| Unresolved | 6 |
-| Model cost | $0.2123 ($0.00965/ref) |
+| Unresolved | 2 |
+| Source errors (searches that failed) | 0 |
+| Model cost | $0.0851 ($0.00387/ref) |
 
 Deterministic steps only (`--no-llm`), same references:
 
@@ -146,26 +148,29 @@ Deterministic steps only (`--no-llm`), same references:
 |---|---|
 | References | 22 |
 | Precision of automatic links | 1.00 |
-| Recall (resolvable, linked correctly) | 0.22 |
+| Recall (resolvable, linked correctly) | 0.83 |
 | Wrong links | 0 |
 | False links on unresolvable items | 0 |
-| Sent to review | 2 (9%) |
-| Review items with the answer among suggestions | 0 |
-| Unresolved | 16 |
+| Sent to review | 4 (18%) |
+| Review items with the answer among suggestions | 3 |
+| Unresolved | 3 |
+| Source errors (searches that failed) | 0 |
 | Model cost | $0.0000 ($0.00000/ref) |
 
-What this shows:
+What the live runs taught, in order:
 
-- **The model earns its place.** Without it, precision is perfect but only about a fifth of the
-  resolvable references get linked; with it, about three quarters do, for about one US cent per
-  reference.
-- **The evaluation caught a real failure mode.** In the first live run precision was 0.93,
-  below the 0.95 gate: the Frascati Manual was linked to a university-repository copy in
-  OpenAlex, a record without a DOI, instead of the published version. The fix is a rule, not a
-  prompt: a match without a DOI now goes to review. The tables above are after that fix.
-- **What is still missed:** a citation whose year is off by one, a citation with a mistyped DOI,
-  and a title whose subtitle the registry stores separately. They end up unresolved or in review,
-  never wrongly linked; better query reformulation in the agent is the next step.
+- **The first run measured an outage, not the resolver.** Crossref rejected every search
+  (the request asked for a field Crossref does not accept), and OpenAlex rejected titles
+  containing "?". The resolver carried on with what was left, so the numbers looked plausible.
+  The evaluation now counts source errors, and a run with any of them fails the gate.
+- **A match without a DOI goes to review, not to a link.** A university-repository copy of an
+  OECD manual had been linked instead of the published version.
+- **Two scoring bugs, found by the second run.** Names cited as "Wilkinson, M. D." were read with
+  an initial as the surname, so the right paper lost its author evidence; and a short title
+  found inside a long citation counted as a full match, so a short comment in another journal
+  outscored the cited paper. Both are fixed and covered by tests.
+- **Compare the two tables** to see what the model adds: it reads messy citations (capitals,
+  missing quotes, odd orders) into fields the scoring can use, and adjudicates the close calls.
 
 ## Configuration
 

@@ -53,6 +53,14 @@ def test_find_year_ignores_page_numbers():
     assert find_year("No year here, pages 1234-1250") is None
 
 
+def test_find_year_ignores_access_dates():
+    # Found in the live evaluation: a web page was linked using the date it was read.
+    assert (
+        find_year("OECD.AI (n.d.), Live data, https://oecd.ai (accessed 1 September 2026).") is None
+    )
+    assert find_year("Report (2021), https://x.org, retrieved 3 May 2024") == 2021
+
+
 def test_normalise_and_content_words():
     assert normalise("Perspectives de l'Emploi : Été") == "perspectives de l emploi ete"
     assert content_words("The future of employment") == {"future", "employment"}

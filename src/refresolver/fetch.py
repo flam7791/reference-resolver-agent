@@ -1,6 +1,8 @@
 """JSON over HTTP with a disk cache that doubles as a recorder for replayable evaluations.
 
-- Every successful response is stored under cache_dir/http, keyed by the full URL.
+- Every successful response is stored under cache_dir/http, keyed by the full URL, and so is
+  every request the service rejects (HTTP 4xx other than 429): a replay must reproduce the
+  failures of the recorded run as well as its answers.
 - In offline mode the cache is the only source: a missing entry raises CacheMiss instead of
   calling the network. Recording once and replaying later makes evaluations reproducible and
   lets CI run them without network access or API costs.
@@ -37,6 +39,10 @@ class CacheMiss(FetchError):
     """Offline mode and no recorded response for this request."""
 
 
+class RequestRejected(FetchError):
+    """The service rejected the request itself (HTTP 4xx): retrying would not help."""
+
+
 class JsonFetcher:
     def __init__(self, settings: Settings, client: httpx.Client | None = None):
         self.settings = settings
@@ -58,12 +64,18 @@ class JsonFetcher:
         path = self._path(url)
         if path.exists():
             record = json.loads(path.read_text(encoding="utf-8"))
+            if "error" in record:
+                raise RequestRejected(record["error"])
             return record["body"]
         if self.settings.offline:
             raise CacheMiss(f"Offline and no recorded response for {url}")
 
-        body = self._fetch(url)
         self.root.mkdir(parents=True, exist_ok=True)
+        try:
+            body = self._fetch(url)
+        except RequestRejected as exc:
+            path.write_text(json.dumps({"url": url, "error": str(exc)}), encoding="utf-8")
+            raise
         path.write_text(json.dumps({"url": url, "body": body}), encoding="utf-8")
         return body
 
@@ -92,6 +104,8 @@ class JsonFetcher:
                 retry_after = response.headers.get("Retry-After", "")
                 time.sleep(min(float(retry_after), 10.0) if retry_after.isdigit() else 2.0**attempt)
                 continue
+            if 400 <= response.status_code < 500 and response.status_code != 429:
+                raise RequestRejected(f"{host} returned HTTP {response.status_code}")
             if response.status_code >= 400:
                 raise FetchError(f"{host} returned HTTP {response.status_code}")
             return response.json()

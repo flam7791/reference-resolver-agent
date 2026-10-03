@@ -34,6 +34,7 @@ class EvalResult:
     review: int = 0
     review_has_answer: int = 0
     unresolved: int = 0
+    source_errors: int = 0  # searches a scholarly database failed or refused
     cost_usd: float = 0.0
     errors: list[dict] = field(default_factory=list)
 
@@ -59,12 +60,14 @@ class EvalResult:
             ("Sent to review", f"{self.review} ({self.review_rate:.0%})"),
             ("Review items with the answer among suggestions", self.review_has_answer),
             ("Unresolved", self.unresolved),
+            ("Source errors (searches that failed)", self.source_errors),
             ("Model cost", f"${self.cost_usd:.4f} (${self.cost_usd / (self.total or 1):.5f}/ref)"),
         ]
         return "\n".join(["| Metric | Value |", "|---|---|"] + [f"| {k} | {v} |" for k, v in rows])
 
     def passed(self, min_precision: float) -> bool:
-        return self.false_links == 0 and self.precision >= min_precision
+        # A run where a database failed measures the outage, not the resolver: it does not pass.
+        return self.false_links == 0 and self.precision >= min_precision and self.source_errors == 0
 
 
 def load_gold(path: Path) -> list[dict]:
@@ -82,6 +85,7 @@ def _norm(identifier: str | None) -> str | None:
 def score_resolutions(gold: list[dict], resolutions: list[Resolution]) -> EvalResult:
     result = EvalResult(total=len(gold))
     for item, res in zip(gold, resolutions, strict=True):
+        result.source_errors += sum(" unavailable: " in step for step in res.trace)
         expected = _norm(item.get("expected"))
         got = _norm(res.identifier)
         result.resolvable += expected is not None

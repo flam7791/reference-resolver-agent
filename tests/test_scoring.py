@@ -70,3 +70,56 @@ def test_score_detail_is_explainable():
     assert set(scored.score_detail) == {"title", "year", "authors"}
     assert scored.score_detail["year"] == 0.6
     assert scored.score >= 0.85  # a one-year slip should not block an otherwise clear match
+
+
+def test_a_short_title_inside_a_long_citation_is_not_a_match():
+    # Found in the live evaluation: a Nature Genetics comment outscored the cited paper.
+    cited = "The FAIR Guiding Principles for scientific data management and stewardship"
+    assert title_similarity(cited, "FAIR principles for data stewardship") < 0.8
+    assert title_similarity(cited, cited) == 1.0
+
+
+def test_registry_without_the_citations_subtitle_still_matches():
+    assert (
+        title_similarity(
+            "On the dangers of stochastic parrots: Can language models be too big?",
+            "On the Dangers of Stochastic Parrots",
+        )
+        == 1.0
+    )
+
+
+def test_cited_authors_match_in_either_name_order():
+    paper = cand(
+        "10.1038/sdata.2016.18",
+        "The FAIR Guiding Principles for scientific data management and stewardship",
+        ["Wilkinson", "Dumontier", "Aalbersberg"],
+        2016,
+    )
+    for names in (["Wilkinson, M. D.", "et al."], ["M. D. Wilkinson"], ["WILKINSON, M. D. ET AL."]):
+        ref = Reference("R1", "raw", authors=names, year=2016)
+        assert score(ref, paper).score_detail["authors"] == round(1 / 3, 3)
+
+
+def test_the_right_paper_wins_against_a_shorter_title_without_authors():
+    ref = Reference(
+        "R1",
+        "WILKINSON, M. D. ET AL. (2016). THE FAIR GUIDING PRINCIPLES FOR SCIENTIFIC DATA "
+        "MANAGEMENT AND STEWARDSHIP. SCIENTIFIC DATA, 3, 160018.",
+        title="The FAIR Guiding Principles for scientific data management and stewardship",
+        authors=["Wilkinson, M. D."],
+        year=2016,
+    )
+    ranked = rank(
+        ref,
+        [
+            cand("10.1038/ng.3544", "FAIR principles for data stewardship", [], 2016),
+            cand(
+                "10.1038/sdata.2016.18",
+                "The FAIR Guiding Principles for scientific data management and stewardship",
+                ["Wilkinson", "Dumontier", "Aalbersberg"],
+                2016,
+            ),
+        ],
+    )
+    assert ranked[0].identifier == "10.1038/sdata.2016.18"
