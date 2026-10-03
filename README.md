@@ -192,6 +192,33 @@ What the live runs taught, in order:
 - **Compare the two tables** to see what the model adds: it reads messy citations (capitals,
   missing quotes, odd orders) into fields the scoring can use, and adjudicates the close calls.
 
+### With a local open-weight model (live run, October 2026)
+
+Llama 3.1 8B through Ollama (8k context, temperature 0) on a laptop CPU (Intel Core i7-13620H,
+16 GB, integrated graphics), same 22 references. Results in `evals/results-llama3.1-8b-ctx8k`.
+
+| Metric | Claude Sonnet 5 | Llama 3.1 8B, local | No model |
+|---|---|---|---|
+| Precision of automatic links | 1.00 | **1.00** | 1.00 |
+| Recall (resolvable, linked correctly) | 1.00 | **1.00** | 0.83 |
+| Wrong links | 0 | **0** | 0 |
+| Sent to review | 2 (9%) | 1 (5%) | 4 (18%) |
+| Unresolved | 2 | 3 | 3 |
+| Model cost | $0.0851 | $0.00 | $0.00 |
+| Run time | not recorded | about 16 minutes (laptop CPU) | not recorded |
+
+- **The first local run scored 0.89 recall, and the cause was the adapter.** Llama returned tool
+  arguments in the wrong JSON types (the list of references as a string, "1" for 1, "null" for
+  null), so every extraction and most adjudications were discarded. Even then it made **no wrong
+  link**: a weaker model lowered automation, not precision, as designed. Arguments are now
+  repaired against the tool's schema (`coerce_to_schema`, tested with the recorded shapes), and
+  the re-run matched Claude on precision and recall.
+- **Where the local model adds value is adjudication.** It decided three close calls among
+  retrieved candidates. Batch extraction still mostly falls back to heuristic parsing (2 of 22
+  references parsed by the model), which this gold set tolerates; harder citation styles would
+  not. Next: extract one reference per call for small models, and measure it.
+- **Twenty-two references is a small set**, and these are one run's numbers on one laptop.
+
 ## Configuration
 
 | Variable | Default | Purpose |
