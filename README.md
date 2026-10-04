@@ -194,32 +194,46 @@ What the live runs taught, in order:
 - **Compare the two tables** to see what the model adds: it reads messy citations (capitals,
   missing quotes, odd orders) into fields the scoring can use, and adjudicates the close calls.
 
-### With a local open-weight model (live run, October 2026)
+### With local open-weight models (live runs, October 2026)
 
-Llama 3.1 8B through Ollama (8k context, temperature 0) on a laptop CPU (Intel Core i7-13620H,
-16 GB, integrated graphics), same 22 references. Results in `evals/results-llama3.1-8b-ctx8k`.
+Llama 3.1 8B and Qwen 2.5 7B through Ollama (8k context, temperature 0) on a laptop CPU (Intel
+Core i7-13620H, 16 GB, integrated graphics), same 22 references. Results in
+`evals/results-llama3.1-8b-ctx8k` and `evals/results-qwen2.5-7b-ctx8k`.
 
-| Metric | Claude Sonnet 5 | Llama 3.1 8B, local | No model |
-|---|---|---|---|
-| Precision of automatic links | 1.00 | **1.00** | 1.00 |
-| Recall (resolvable, linked correctly) | 1.00 | **1.00** | 0.83 |
-| Wrong links | 0 | **0** | 0 |
-| Sent to review | 2 (9%) | 1 (5%) | 4 (18%) |
-| Unresolved | 2 | 3 | 3 |
-| Model cost | $0.0851 | $0.00 | $0.00 |
-| Run time | not recorded | about 16 minutes (laptop CPU) | not recorded |
+| Metric | Claude Sonnet 5 | Llama 3.1 8B, local | Qwen 2.5 7B, local | No model |
+|---|---|---|---|---|
+| Precision of automatic links | 1.00 | **1.00** | **1.00** (0.95 before the rule below) | 1.00 |
+| Recall (resolvable, linked correctly) | 1.00 | **1.00** | **1.00** | 0.83 |
+| Wrong or false links | 0 | **0** | **0** (1 before the rule) | 0 |
+| Sent to review | 2 (9%) | 1 (5%) | 2 (9%) | 4 (18%) |
+| Unresolved | 2 | 3 | 2 | 3 |
+| Model cost | $0.0851 | $0.00 | $0.00 | $0.00 |
+| Run time | not recorded | about 16 minutes (laptop CPU) | about 16 minutes (laptop CPU) | not recorded |
 
-- **The first local run scored 0.89 recall, and the cause was the adapter.** Llama returned tool
+- **Qwen made the first false link of any run, and the design changed because of it.** For a web
+  page with no DOI (`OECD.AI Policy Observatory, Live data on AI`), the registries returned three
+  unrelated works sharing words of the title, tied on score, none by a cited author. Qwen picked
+  one, a Zenodo record on benchmarking platforms, with confidence 0.95. A model may now choose
+  among candidates but not against the evidence: when none of a candidate's authors appears in
+  the citation, the case goes to a person (`model_link`, tested with this case). Replayed from
+  the recorded answers, the same run gives precision 1.00 and no false link; Claude's and
+  Llama's results are unchanged, since none of their model links had that profile.
+- **A failed call is now recorded too.** Qwen's first extraction batch timed out and the run
+  fell back to heuristic parsing, as designed, but the failure was not in the recording, so the
+  run could not be replayed. Failures are now recorded and replayed as failures.
+- **The first Llama run scored 0.89 recall, and the cause was the adapter.** Llama returned tool
   arguments in the wrong JSON types (the list of references as a string, "1" for 1, "null" for
   null), so every extraction and most adjudications were discarded. Even then it made **no wrong
   link**: a weaker model lowered automation, not precision, as designed. Arguments are now
   repaired against the tool's schema (`coerce_to_schema`, tested with the recorded shapes), and
   the re-run matched Claude on precision and recall.
-- **Where the local model adds value is adjudication.** It decided three close calls among
-  retrieved candidates. Batch extraction still mostly falls back to heuristic parsing (2 of 22
-  references parsed by the model), which this gold set tolerates; harder citation styles would
-  not. Next: extract one reference per call for small models, and measure it.
-- **Twenty-two references is a small set**, and these are one run's numbers on one laptop.
+- **Where a local model adds value is adjudication and search.** Llama decided three close calls
+  among retrieved candidates; Qwen decided one and found two through the search agent. Batch
+  extraction still mostly falls back to heuristic parsing (2 of 22 references parsed by either
+  model), which this gold set tolerates; harder citation styles would not. Next: extract one
+  reference per call for small models, and measure it.
+- **Twenty-two references is a small set**, and these are one run's numbers per model on one
+  laptop.
 
 ## Configuration
 

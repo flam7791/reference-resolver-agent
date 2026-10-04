@@ -31,6 +31,14 @@ class ReplayMiss(RuntimeError):
     """Offline replay found no recorded reply: the run must fail, not silently change."""
 
 
+class RecordedFailure(RuntimeError):
+    """A model call that failed when recorded (a timeout, a server error), replayed as a failure.
+
+    The resolver degrades on a failed call (heuristic parsing, review instead of a link), so a
+    recorded run is only reproducible if its failures are recorded too.
+    """
+
+
 @dataclass
 class ToolCall:
     id: str
@@ -338,17 +346,23 @@ class RecordingClient:
         path = self.root / f"{key}.json"
         if path.exists():
             data = json.loads(path.read_text(encoding="utf-8"))
+            if "error" in data:
+                raise RecordedFailure(data["error"])
             data["tool_calls"] = [ToolCall(**c) for c in data["tool_calls"]]
             return LLMReply(**{**data, "cached": True})
         if self.offline or self.inner is None:
             raise ReplayMiss("Offline and no recorded model reply for this request.")
-        reply = self.inner.create(
-            system=system,
-            messages=messages,
-            tools=tools,
-            tool_choice=tool_choice,
-            max_tokens=max_tokens,
-        )
         self.root.mkdir(parents=True, exist_ok=True)
+        try:
+            reply = self.inner.create(
+                system=system,
+                messages=messages,
+                tools=tools,
+                tool_choice=tool_choice,
+                max_tokens=max_tokens,
+            )
+        except Exception as exc:
+            path.write_text(json.dumps({"error": str(exc) or type(exc).__name__}), encoding="utf-8")
+            raise
         path.write_text(json.dumps(asdict(reply)), encoding="utf-8")
         return reply

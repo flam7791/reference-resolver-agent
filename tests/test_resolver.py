@@ -109,6 +109,45 @@ def test_model_adjudication_links_an_ambiguous_case(settings):
     assert tool["input_schema"]["properties"]["choice"]["enum"] == [0, 1, 2]
 
 
+def test_the_model_cannot_link_a_candidate_whose_authors_contradict_the_citation(settings):
+    # From the Qwen 2.5 7B run: a web page with no DOI, three unrelated works sharing words of
+    # its title, and the model choosing one of them with confidence 0.95.
+    unrelated = [
+        cand("10.3389/fphy.2025.1668106", "Visualizing offline and live data with AI", ["Mazon"]),
+        cand("10.5281/zenodo.21068069", "Live AI benchmarking platforms", ["Zhao"]),
+    ]
+    llm = ScriptedLLM(
+        [
+            tool_reply(
+                "record_references",
+                {
+                    "references": [
+                        {
+                            "index": 1,
+                            "authors": [],
+                            "year": None,
+                            "title": "Live data on AI",
+                            "container": None,
+                        }
+                    ]
+                },
+            ),
+            tool_reply(
+                "choose_candidate",
+                {"choice": 1, "confidence": 0.95, "rationale": "A live AI platform."},
+            ),
+        ]
+    )
+    crossref = FakeSource("crossref", {"live data on ai": unrelated})
+    resolver = make_resolver(settings, crossref=crossref, llm=llm, use_agent=False)
+    ref = resolver.parse(
+        ["OECD.AI Policy Observatory (n.d.), Live data on AI, https://oecd.ai (accessed 2026)."]
+    )[0]
+    res = resolver.resolve(ref)
+    assert (res.status, res.method) == ("review", "llm_adjudication")
+    assert "authors" in res.rationale
+
+
 def test_invalid_model_choice_is_ignored(settings):
     llm = ScriptedLLM(
         [

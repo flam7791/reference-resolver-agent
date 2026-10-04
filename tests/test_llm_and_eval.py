@@ -3,7 +3,7 @@ import json
 import pytest
 
 from refresolver.evaluation import load_gold, score_resolutions
-from refresolver.llm import RecordingClient
+from refresolver.llm import RecordedFailure, RecordingClient
 from refresolver.models import Resolution
 from refresolver.report import write_outputs
 
@@ -22,6 +22,19 @@ def test_recording_client_replays_identical_requests_offline(tmp_path):
     assert second.cached and second.tool_calls[0].name == "record_references"
     with pytest.raises(RuntimeError):
         replay.create(system="s", messages=[{"role": "user", "content": "new"}], tools=[])
+
+
+def test_a_failed_model_call_is_recorded_and_replayed_as_a_failure(tmp_path):
+    class TimesOut:
+        def create(self, **_):
+            raise TimeoutError("timed out")
+
+    request = dict(system="s", messages=[{"role": "user", "content": "x"}], tools=[])
+    with pytest.raises(TimeoutError):
+        RecordingClient(TimesOut(), tmp_path, model="m").create(**request)
+    replay = RecordingClient(None, tmp_path, model="m", offline=True)
+    with pytest.raises(RecordedFailure, match="timed out"):
+        replay.create(**request)
 
 
 def res(status, identifier=None, candidates=()):

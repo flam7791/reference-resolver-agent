@@ -304,6 +304,26 @@ class Resolver:
                 )
             return outcome("linked", method, cand, confidence, rationale)
 
+        def model_link(method, cand, confidence, rationale):
+            # A model may pick among candidates, but not against the evidence: if the candidate
+            # lists authors and none of them is in the citation, a person decides. Found in the
+            # live run with Qwen 2.5 7B, which linked a web page (no DOI exists) to an unrelated
+            # Zenodo record, choosing it among three tied candidates with confidence 0.95.
+            if cand.score_detail.get("authors", 0.5) == 0.0:
+                trace.append(
+                    f"{cand.identifier}: no cited author among its authors, sent to review"
+                )
+                return outcome(
+                    "review",
+                    method,
+                    cand,
+                    confidence,
+                    (rationale + " " if rationale else "")
+                    + "None of the candidate's authors appear in the citation, "
+                    "so a person should confirm it.",
+                )
+            return link(method, cand, confidence, rationale)
+
         if not groups:  # every source failed: say so, rather than "not found"
             return outcome(
                 "unresolved", "none", rationale="The scholarly databases could not be reached."
@@ -320,7 +340,7 @@ class Resolver:
             if choice:
                 chosen = candidates[choice - 1]
                 if confidence >= s.llm_accept and chosen.score >= s.review_floor:
-                    return link("llm_adjudication", chosen, confidence, model_rationale)
+                    return model_link("llm_adjudication", chosen, confidence, model_rationale)
                 return outcome("review", "llm_adjudication", chosen, confidence, model_rationale)
 
         # 4. Search agent for what is left.
@@ -331,7 +351,7 @@ class Resolver:
                 score(ref, cand)
                 trace.append(f"agent proposal scores {cand.score} {cand.score_detail}")
                 if confidence >= s.llm_accept and cand.score >= s.review_floor:
-                    return link("agent_search", cand, confidence, rationale)
+                    return model_link("agent_search", cand, confidence, rationale)
                 return outcome("review", "agent_search", cand, confidence, rationale)
 
         # 5. Human review, or unresolved.

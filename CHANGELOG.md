@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.2 (2026-10)
+
+- A model's choice (adjudication or search agent) is not linked automatically when none of the
+  candidate's authors appears in the citation; a person confirms it. Found in the live run with
+  Qwen 2.5 7B, which linked a web page without a DOI to an unrelated record with confidence 0.95.
+- Failed model calls (timeouts, server errors) are recorded and replayed as failures, so a run
+  that degraded to heuristic parsing replays exactly.
+- Results of Qwen 2.5 7B on the gold set, next to Claude and Llama 3.1 8B.
+
 ## 0.2.1 (2026-10)
 
 - Tool arguments are repaired to the tool's schema before use: small open-weight models return
