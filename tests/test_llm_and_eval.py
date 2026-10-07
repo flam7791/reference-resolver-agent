@@ -156,3 +156,53 @@ def test_a_run_where_a_database_failed_does_not_pass_the_gate():
     assert result.precision == 1.0 and result.source_errors == 1
     assert not result.passed(0.95)  # it measured the outage, not the resolver
     assert "| Source errors (searches that failed) | 1 |" in result.table()
+
+
+def test_calibration_counts_scores_and_model_confidence_per_band(tmp_path, capsys):
+    from refresolver.cli import main
+
+    def scored(identifier, score, method="none", chosen=None, confidence=0.0, status="review"):
+        return Resolution(
+            "R",
+            "raw",
+            status,
+            method,
+            identifier=chosen,
+            confidence=confidence,
+            candidates=[{"identifier": identifier, "label": identifier, "score": score}],
+        )
+
+    gold = [
+        {"id": "a", "expected": "10.1/a"},
+        {"id": "b", "expected": "10.1/b"},
+        {"id": "c", "expected": None},
+        {"id": "d", "expected": "10.1/d"},
+    ]
+    runs = [
+        scored("10.1/a", 1.0, "deterministic", "10.1/a", 1.0, "linked"),  # top right
+        scored("10.1/x", 0.9, "llm_adjudication", "10.1/x", 0.95),  # top wrong, model wrong
+        scored("10.1/y", 0.6),  # nothing to find: any top candidate is wrong
+        scored("10.1/d", 0.7, "agent_search", "10.1/d", 0.85, "linked"),  # model right
+    ]
+    result = score_resolutions(gold, runs)
+    bands = {(b["low"], b["high"]): (b["n"], b["correct"]) for b in result.score_bands}
+    assert bands[(0.95, 1.0)] == (1, 1)
+    assert bands[(0.85, 0.95)] == (1, 0)
+    assert bands[(0.55, 0.70)] == (1, 0)
+    assert bands[(0.70, 0.85)] == (1, 1)
+    model = {(b["low"], b["high"]): (b["n"], b["correct"]) for b in result.confidence_bands}
+    assert model[(0.90, 1.0)] == (1, 0)  # high stated confidence, wrong record
+    assert model[(0.80, 0.90)] == (1, 1)
+    assert model[(0.0, 0.50)] == (0, 0)
+    table = result.calibration_table()
+    assert "| [0.95, 1.00] | 1 | 1 | 1.00 |" in table
+    assert "no data" in table  # empty bands are shown, not hidden
+
+    gold_file = tmp_path / "gold.jsonl"
+    gold_file.write_text("\n".join(json.dumps(g) for g in gold), encoding="utf-8")
+    saved = tmp_path / "eval_resolutions.json"
+    saved.write_text(json.dumps([r.to_dict() for r in runs]), encoding="utf-8")
+    assert main(["calibrate", str(gold_file), str(saved)]) == 0
+    assert "| [0.90, 1.00] | 1 | 0 | 0.00 |" in capsys.readouterr().out
+    saved.write_text(json.dumps([r.to_dict() for r in runs[:2]]), encoding="utf-8")
+    assert main(["calibrate", str(gold_file), str(saved)]) == 2

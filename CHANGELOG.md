@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 (2026-10)
+
+- Calibration tables in every evaluation: accuracy of the top candidate per band of
+  deterministic score, and of the model's choices per band of its stated confidence (including
+  choices sent to review). `refresolver calibrate` computes them from any saved run; the four
+  committed result folders include them. Findings in the README.
+- `AGENTS.md` for coding agents (`CLAUDE.md` imports it), and `skills/reference-resolver/SKILL.md`
+  for assistants that call the MCP tools.
+
 ## 0.2.2 (2026-10)
 
 - A model's choice (adjudication or search agent) is not linked automatically when none of the

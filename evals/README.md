@@ -37,3 +37,7 @@ public bibliographic metadata and the model's answers about it.
 - **Review items with the answer among suggestions** shows whether the review queue saves the
   reviewer time.
 - **Cost per reference** turns token usage into money, for the business case.
+- **Calibration** shows, per band of deterministic score and of the model's stated confidence,
+  how often the choice was the right work. Use it before changing `REFRESOLVER_AUTO_ACCEPT` or
+  `REFRESOLVER_LLM_ACCEPT`; `refresolver calibrate evals/gold_references.jsonl
+  <folder>/eval_resolutions.json` recomputes it for any saved run.

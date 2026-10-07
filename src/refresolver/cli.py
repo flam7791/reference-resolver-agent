@@ -70,6 +70,14 @@ def _eval(args) -> int:
         "",
         result.table(),
         "",
+        "## Calibration",
+        "",
+        f"Thresholds in this run: auto-link at score >= {settings.auto_accept} with a lead of "
+        f">= {settings.min_margin}; model-assisted link at confidence >= {settings.llm_accept} "
+        f"and score >= {settings.review_floor}.",
+        "",
+        result.calibration_table(),
+        "",
         "## Errors",
         "",
     ] + [f"- {json.dumps(e)}" for e in result.errors]
@@ -86,6 +94,22 @@ def _eval(args) -> int:
     ok = result.passed(args.min_precision)
     print("PASS" if ok else f"FAIL (need precision >= {args.min_precision} and no false links)")
     return 0 if ok else 1
+
+
+def _calibrate(args) -> int:
+    """Calibration tables from a saved run (eval_resolutions.json, or resolutions.json from a
+    run over a document whose answers a person has since confirmed in a gold file)."""
+    from .evaluation import load_gold, score_resolutions
+    from .models import Resolution
+
+    gold = load_gold(Path(args.gold))
+    data = json.loads(Path(args.resolutions).read_text(encoding="utf-8"))
+    resolutions = [Resolution(**r) for r in data]
+    if len(resolutions) != len(gold):
+        print(f"{len(resolutions)} resolutions for {len(gold)} gold items", file=sys.stderr)
+        return 2
+    print(score_resolutions(gold, resolutions).calibration_table())
+    return 0
 
 
 def _serve(args) -> int:
@@ -125,6 +149,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--min-precision", type=float, default=0.95)
     common(p)
 
+    p = sub.add_parser("calibrate", help="calibration tables from a saved evaluation run")
+    p.add_argument("gold")
+    p.add_argument("resolutions", help="eval_resolutions.json from `refresolver eval --out`")
+
     p = sub.add_parser("serve", help="run as an MCP server")
     p.add_argument("--transport", choices=["stdio", "streamable-http"], default="stdio")
     p.add_argument("--port", type=int, default=8001)
@@ -136,7 +164,13 @@ def main(argv: list[str] | None = None) -> int:
         level=logging.DEBUG if args.verbose else logging.WARNING,
         format="%(levelname)s %(name)s: %(message)s",
     )
-    handlers = {"run": _run, "cite": _cite, "eval": _eval, "serve": _serve}
+    handlers = {
+        "run": _run,
+        "cite": _cite,
+        "eval": _eval,
+        "calibrate": _calibrate,
+        "serve": _serve,
+    }
     from .fetch import CacheMiss
     from .llm import ReplayMiss
 

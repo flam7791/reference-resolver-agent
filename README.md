@@ -122,6 +122,12 @@ The resolver is also an MCP server with two read-only tools, `resolve_citation` 
 }
 ```
 
+A skill tells the assistant how to use the tools well: pass citations as written, report
+`linked`, `review` and `unresolved` honestly, and never fill a gap with a DOI from memory. Copy
+[`skills/reference-resolver`](skills/reference-resolver/SKILL.md) into your assistant's skills
+folder (for Claude Code, `~/.claude/skills/`).
+
+
 ## Evaluation
 
 `evals/gold_references.jsonl` holds 22 citations with known answers. They cover edition traps,
@@ -145,6 +151,35 @@ offline, identically and for free, and CI runs it as a quality gate: it fails be
 precision or on any false link. Details are in [evals/README.md](evals/README.md).
 
 Run it with and without `--no-llm` to see what the model steps add, and at what cost.
+
+### Calibration: are the thresholds where the evidence says?
+
+Every evaluation also reports two calibration tables (`refresolver calibrate` computes them
+from any saved run): the accuracy of the top candidate per band of deterministic score, and the
+accuracy of the model's choices per band of its stated confidence. From the four recorded runs
+on the 22 references:
+
+| | Score ≥ 0.95 | 0.85–0.95 | below 0.85 |
+|---|---|---|---|
+| Top candidate correct, fields parsed by Claude | 13/13 | 4/4 | 0/4 |
+| Top candidate correct, heuristic parsing (no model, Llama, Qwen) | 13/13 | 3/4 | 0/4 |
+
+| Model choices | Confidence ≥ 0.90 | 0.80–0.90 | below 0.80 |
+|---|---|---|---|
+| Claude Sonnet 5 | 5/5 correct | none | none |
+| Llama 3.1 8B | 3/3 correct | none | none |
+| Qwen 2.5 7B | 3/4 correct | 0/1 correct | none |
+
+- **The auto-link threshold sits at the edge of the evidence.** Below a score of 0.85 the top
+  candidate was never the cited work; at 0.85–0.95 with heuristic parsing it was wrong once, and
+  the margin rule (a clear lead over the runner-up) is what kept that case from being linked.
+- **A model's stated confidence is not evidence on its own.** Qwen's two wrong choices came with
+  confidence 0.95 and 0.80, both on citations with no DOI to find; the corroboration rules (score
+  floor, a cited author on the candidate) sent both to review. That is why a model-assisted link
+  needs code to agree.
+- **Five choices per model is not a calibration curve.** The tables show where data is missing
+  ("no data") rather than hiding it; reviewers' decisions from `review_queue.csv` are the way to
+  grow them (see the roadmap).
 
 ### Results (live run, October 2026)
 
@@ -264,7 +299,7 @@ evaluation, and compare.
       language (what translators need most). Registry links between language editions are
       sparse, so this needs title translation plus search, measured on its own gold set.
 - [ ] **Learning from reviewers**: feed decisions from `review_queue.csv` back into the gold set
-      and use them to tune the thresholds.
+      and use them to tune the thresholds, with the calibration tables as the evidence.
 - [ ] **More registries**: DataCite (datasets, arXiv), national library catalogues.
 - [ ] **Throughput**: concurrent resolution with a shared rate limiter; prompt caching for
       extraction batches.
@@ -280,14 +315,16 @@ src/refresolver/
   llm.py          model interface, Anthropic adapter, record/replay, cost meter
   fetch.py        HTTP with cache, politeness, retries, offline replay
   text.py         bibliography detection, splitting, DOIs, normalisation
-  evaluation.py   gold-set metrics
+  evaluation.py   gold-set metrics and calibration tables
   report.py       report.md, resolutions.json, review_queue.csv
   mcp_server.py   MCP tools
-  cli.py          run | cite | eval | serve
+  cli.py          run | cite | eval | calibrate | serve
+skills/           a SKILL.md for assistants that call the MCP tools
 tests/            offline tests with fakes and fixtures, including the real SDK path
 evals/            gold set and (after a live run) recordings and results
 examples/         a fictional working paper with a mixed-style bibliography
 docs/             design decisions
+AGENTS.md         commands and invariants for coding agents (CLAUDE.md imports it)
 ```
 
 ## License

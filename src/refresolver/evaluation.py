@@ -10,7 +10,11 @@ The metrics reflect what matters in practice:
 - recall: share of resolvable citations linked correctly without a person;
 - review rate, and whether the right answer is in the review queue's suggestions (does review
   save the reviewer time?);
-- cost per reference.
+- cost per reference;
+- calibration: for each band of the top candidate's deterministic score, and of the model's
+  stated confidence on the choices it made, how often the choice was the right work. The
+  thresholds (`REFRESOLVER_AUTO_ACCEPT`, `REFRESOLVER_LLM_ACCEPT`) are policy; these tables are
+  the evidence for setting them. A model's stated confidence is not calibrated by itself.
 """
 
 from __future__ import annotations
@@ -37,6 +41,8 @@ class EvalResult:
     source_errors: int = 0  # searches a scholarly database failed or refused
     cost_usd: float = 0.0
     errors: list[dict] = field(default_factory=list)
+    score_bands: list[dict] = field(default_factory=list)  # top deterministic score vs correct
+    confidence_bands: list[dict] = field(default_factory=list)  # model confidence vs correct
 
     @property
     def precision(self) -> float:
@@ -65,9 +71,79 @@ class EvalResult:
         ]
         return "\n".join(["| Metric | Value |", "|---|---|"] + [f"| {k} | {v} |" for k, v in rows])
 
+    def calibration_table(self) -> str:
+        """Accuracy per band. Empty bands are shown, so a reader sees where there is no data."""
+        lines = [
+            "Top candidate's deterministic score: is the top candidate the expected work?",
+            "",
+            "| Score band | References | Top candidate correct | Accuracy |",
+            "|---|---|---|---|",
+        ]
+        lines += [_band_row(b) for b in self.score_bands]
+        lines += [
+            "",
+            "Model's stated confidence on the candidate it chose (adjudication or search agent),",
+            "whether or not the choice was linked: is the chosen record the expected work?",
+            "",
+            "| Confidence band | Model choices | Correct | Accuracy |",
+            "|---|---|---|---|",
+        ]
+        lines += [_band_row(b) for b in self.confidence_bands]
+        return "\n".join(lines)
+
     def passed(self, min_precision: float) -> bool:
         # A run where a database failed measures the outage, not the resolver: it does not pass.
         return self.false_links == 0 and self.precision >= min_precision and self.source_errors == 0
+
+
+SCORE_BANDS = (0.0, 0.55, 0.70, 0.85, 0.95, 1.0001)
+CONFIDENCE_BANDS = (0.0, 0.50, 0.80, 0.90, 1.0001)
+MODEL_METHODS = ("llm_adjudication", "agent_search")
+
+
+def _bands(edges: tuple[float, ...], pairs: list[tuple[float, bool]]) -> list[dict]:
+    """Group (value, correct) pairs into half-open bands [low, high); the last band includes 1.0."""
+    bands = []
+    for low, high in zip(edges, edges[1:], strict=False):
+        inside = [ok for value, ok in pairs if low <= value < high]
+        bands.append(
+            {
+                "low": low,
+                "high": min(high, 1.0),
+                "n": len(inside),
+                "correct": sum(inside),
+                "accuracy": round(sum(inside) / len(inside), 2) if inside else None,
+            }
+        )
+    return bands
+
+
+def _band_row(b: dict) -> str:
+    closing = "]" if b["high"] >= 1.0 else ")"
+    label = f"[{b['low']:.2f}, {b['high']:.2f}{closing}"
+    accuracy = f"{b['accuracy']:.2f}" if b["accuracy"] is not None else "no data"
+    return f"| {label} | {b['n']} | {b['correct']} | {accuracy} |"
+
+
+def calibration(gold: list[dict], resolutions: list[Resolution]) -> tuple[list[dict], list[dict]]:
+    """Two calibration tables from one run.
+
+    - Deterministic: for every reference with candidates, the top candidate's score, and whether
+      that candidate is the expected work. An item with no expected identifier counts as correct
+      only if nothing would be linked, so any top candidate there counts as wrong.
+    - Model: for every reference where the model chose a record (its result's method is
+      adjudication or the search agent), its stated confidence and whether the record is right.
+      This includes choices sent to review, which is where low confidence should land.
+    """
+    scores, confidences = [], []
+    for item, res in zip(gold, resolutions, strict=True):
+        expected = _norm(item.get("expected"))
+        if res.candidates and "score" in res.candidates[0]:
+            top = res.candidates[0]
+            scores.append((float(top["score"]), _norm(top["identifier"]) == expected))
+        if res.method in MODEL_METHODS and res.identifier:
+            confidences.append((res.confidence, _norm(res.identifier) == expected))
+    return _bands(SCORE_BANDS, scores), _bands(CONFIDENCE_BANDS, confidences)
 
 
 def load_gold(path: Path) -> list[dict]:
@@ -110,6 +186,7 @@ def score_resolutions(gold: list[dict], resolutions: list[Resolution]) -> EvalRe
             result.unresolved += 1
             if expected:
                 result.errors.append({"id": item["id"], "error": "missed", "expected": expected})
+    result.score_bands, result.confidence_bands = calibration(gold, resolutions)
     return result
 
 
