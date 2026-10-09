@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0 (2026-10)
+
+- `REFRESOLVER_EXTRACT_BATCH` (default 20, unchanged) sets how many references go into one
+  extraction call. Both 8B local models parsed 2 of 22 references in batches of 20; `1` sends
+  one reference per call for them. The recorded Claude run keeps the default and replays
+  unchanged. Not measured yet; the command is in the README.
+
 ## 0.3.0 (2026-10)
 
 - Calibration tables in every evaluation: accuracy of the top candidate per band of

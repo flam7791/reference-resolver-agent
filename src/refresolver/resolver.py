@@ -206,8 +206,9 @@ class Resolver:
                 )
             )
         if self.llm:
-            for start in range(0, len(refs), EXTRACT_BATCH):
-                self._extract_with_model(refs[start : start + EXTRACT_BATCH])
+            size = max(1, min(int(self.settings.extract_batch or EXTRACT_BATCH), 50))
+            for start in range(0, len(refs), size):
+                self._extract_with_model(refs[start : start + size])
         return refs
 
     def _extract_with_model(self, batch: list[Reference]) -> None:

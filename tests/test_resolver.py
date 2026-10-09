@@ -334,3 +334,33 @@ def test_a_match_without_a_doi_goes_to_review_not_to_a_link(settings):
     assert res.status == "review" and res.identifier == copy.identifier
     assert "no DOI" in res.rationale
     assert any("sent to review instead of linking" in step for step in res.trace)
+
+
+def test_extraction_batch_size_is_a_setting(settings):
+    from dataclasses import replace
+
+    def reply_for(n):
+        return tool_reply(
+            "record_references",
+            {"references": [{"index": 1, "authors": ["A"], "year": 2020, "title": f"T{n}"}]},
+        )
+
+    citations = [f"Author, A. (2020), Title number {n}, Journal." for n in range(3)]
+    llm = ScriptedLLM([reply_for(n) for n in range(3)])
+    resolver = make_resolver(replace(settings, extract_batch=1), llm=llm)
+    refs = resolver.parse(citations)
+    assert len(llm.requests) == 3  # one call per reference
+    assert all("1. " in r["messages"][0]["content"] and "2. " not in r["messages"][0]["content"]
+               for r in llm.requests)  # fmt: skip
+    assert [r.title for r in refs] == ["T0", "T1", "T2"]
+
+    batched = ScriptedLLM([reply_for(0)])
+    make_resolver(settings, llm=batched).parse(citations)
+    assert len(batched.requests) == 1  # the default: all three in one call
+
+
+def test_extraction_batch_comes_from_the_environment(monkeypatch):
+    from refresolver.config import Settings
+
+    monkeypatch.setenv("REFRESOLVER_EXTRACT_BATCH", "1")
+    assert Settings.from_env().extract_batch == 1

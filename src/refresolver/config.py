@@ -32,6 +32,9 @@ class Settings:
     review_floor: float = 0.55  # below this, a candidate is not worth a person's time
     llm_accept: float = 0.80  # model confidence needed for a model-assisted link
     max_agent_steps: int = 6  # hard budget for the search agent, per reference
+    # References per extraction call. 20 suits a frontier model; small local models mostly
+    # failed batches of 20 (2 of 22 parsed), so measure 1 for them.
+    extract_batch: int = 20
 
     # Scholarly APIs. A contact email puts requests in Crossref's and OpenAlex's "polite pool".
     contact_email: str | None = None
@@ -63,6 +66,7 @@ class Settings:
             review_floor=float(env.get("REFRESOLVER_REVIEW_FLOOR", d.review_floor)),
             llm_accept=float(env.get("REFRESOLVER_LLM_ACCEPT", d.llm_accept)),
             max_agent_steps=int(env.get("REFRESOLVER_MAX_AGENT_STEPS", d.max_agent_steps)),
+            extract_batch=int(env.get("REFRESOLVER_EXTRACT_BATCH", d.extract_batch)),
             contact_email=env.get("REFRESOLVER_CONTACT_EMAIL") or None,
             openalex_api_key=env.get("OPENALEX_API_KEY") or None,
             http_timeout=float(env.get("REFRESOLVER_HTTP_TIMEOUT", d.http_timeout)),

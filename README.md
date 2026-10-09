@@ -265,8 +265,19 @@ Core i7-13620H, 16 GB, integrated graphics), same 22 references. Results in
 - **Where a local model adds value is adjudication and search.** Llama decided three close calls
   among retrieved candidates; Qwen decided one and found two through the search agent. Batch
   extraction still mostly falls back to heuristic parsing (2 of 22 references parsed by either
-  model), which this gold set tolerates; harder citation styles would not. Next: extract one
-  reference per call for small models, and measure it.
+  model), which this gold set tolerates; harder citation styles would not.
+  `REFRESOLVER_EXTRACT_BATCH=1` (0.4) extracts one reference per call for small models; it is
+  not measured yet:
+
+  ```bash
+  export REFRESOLVER_PROVIDER=openai_compatible REFRESOLVER_MODEL=qwen2.5:7b-ctx8k
+  export REFRESOLVER_PRICE_INPUT=0 REFRESOLVER_PRICE_OUTPUT=0 REFRESOLVER_EXTRACT_BATCH=1
+  refresolver eval evals/gold_references.jsonl --cache-dir evals/recordings-qwen-batch1 \
+    --out evals/results-qwen2.5-7b-ctx8k-batch1
+  ```
+
+  Compare "parsed by the model" in its `eval_resolutions.json` (`parsed by llm` in each trace)
+  and recall with the batched Qwen run above.
 - **Twenty-two references is a small set**, and these are one run's numbers per model on one
   laptop.
 
@@ -285,6 +296,7 @@ Core i7-13620H, 16 GB, integrated graphics), same 22 references. Results in
 | `REFRESOLVER_REVIEW_FLOOR` | `0.55` | Below this, a candidate is not worth a reviewer's time |
 | `REFRESOLVER_LLM_ACCEPT` | `0.80` | Model confidence required for a model-assisted link |
 | `REFRESOLVER_MAX_AGENT_STEPS` | `6` | Hard budget for the search agent, per reference |
+| `REFRESOLVER_EXTRACT_BATCH` | `20` | References per extraction call; try `1` for small local models |
 | `REFRESOLVER_CONTACT_EMAIL` | none | Identifies you to Crossref and OpenAlex (polite pool) |
 | `OPENALEX_API_KEY` | none | Optional OpenAlex key |
 | `REFRESOLVER_CACHE_DIR` | `~/.cache/refresolver` | Recorded HTTP and model responses |
