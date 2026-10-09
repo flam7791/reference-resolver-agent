@@ -266,8 +266,13 @@ Core i7-13620H, 16 GB, integrated graphics), same 22 references. Results in
   among retrieved candidates; Qwen decided one and found two through the search agent. Batch
   extraction still mostly falls back to heuristic parsing (2 of 22 references parsed by either
   model), which this gold set tolerates; harder citation styles would not.
-  `REFRESOLVER_EXTRACT_BATCH=1` (0.4) extracts one reference per call for small models; it is
-  not measured yet:
+- **One reference per call fixes extraction for a small model, at a price in time.** With
+  `REFRESOLVER_EXTRACT_BATCH=1` (0.4), Qwen 2.5 7B parsed all 22 references itself, against 2
+  in batches of 20. On this gold set the outcome barely moves, because heuristic parsing was
+  already enough here: precision and recall stay at 1.00 with no wrong or false link; one more
+  reference goes to review (3 against 2) and one fewer is unresolved (1 against 2). The run took
+  44 minutes against about 16. Use it where citations are messier than this set; measure first.
+  Results in `evals/results-qwen2.5-7b-ctx8k-batch1`:
 
   ```bash
   export REFRESOLVER_PROVIDER=openai_compatible REFRESOLVER_MODEL=qwen2.5:7b-ctx8k
@@ -275,9 +280,6 @@ Core i7-13620H, 16 GB, integrated graphics), same 22 references. Results in
   refresolver eval evals/gold_references.jsonl --cache-dir evals/recordings-qwen-batch1 \
     --out evals/results-qwen2.5-7b-ctx8k-batch1
   ```
-
-  Compare "parsed by the model" in its `eval_resolutions.json` (`parsed by llm` in each trace)
-  and recall with the batched Qwen run above.
 - **Twenty-two references is a small set**, and these are one run's numbers per model on one
   laptop.
 

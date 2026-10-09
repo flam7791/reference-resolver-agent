@@ -11,6 +11,8 @@ dist/
 
 # Run outputs (keep evals/recordings and evals/results: they are committed on purpose)
 out/
+# Local-model recordings stay on the machine that made them (large); their results are committed
+evals/recordings-*/
 
 # Secrets
 .env
