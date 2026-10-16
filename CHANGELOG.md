@@ -1,11 +1,14 @@
 # Changelog
 
-## Unreleased
+## 0.4.1 (2026-10)
 
 - Live run with `REFRESOLVER_EXTRACT_BATCH=1`, Qwen 2.5 7B on a laptop CPU: 22 of 22
   references parsed by the model (2 of 22 in batches of 20); precision and recall 1.00, no
   wrong or false link; 3 to review, 1 unresolved; 44 minutes against about 16. Results in
   `evals/results-qwen2.5-7b-ctx8k-batch1`; local recordings are now git-ignored.
+- The README opens with the framework pattern this repository implements and a link to the
+  other repositories.
+- `CITATION.cff`, so GitHub offers "Cite this repository".
 
 ## 0.4.0 (2026-10)
 

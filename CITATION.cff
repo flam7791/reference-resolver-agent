@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use or refer to this software, please cite it as below."
+type: software
+title: reference-resolver-agent
+abstract: "An auditable agent that resolves messy bibliographic references to registered works (DOIs), with confidence thresholds and a human review queue."
+authors:
+  - given-names: Flavio
+    family-names: Mericio
+version: 0.4.1
+date-released: "2026-10-16"
+license: MIT
+repository-code: "https://github.com/flam7791/reference-resolver-agent"
+url: "https://github.com/flam7791/reference-resolver-agent"
+keywords:
+  - entity-resolution
+  - bibliographic-references
+  - doi
+  - human-in-the-loop

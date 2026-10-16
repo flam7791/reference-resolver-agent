@@ -9,6 +9,14 @@ queue** instead of guessing.
 > Independent project. It uses the public Crossref and OpenAlex APIs and the Anthropic API. The
 > sample document describes a fictional organisation.
 
+> **Part of a portfolio.** Implements pattern [P4][aief-p4] (with [P7][aief-p7] for adjudication) of
+> the [AI engineering framework][aief], at its *Build* stage. [All repositories][aief-all].
+
+[aief]: https://github.com/flam7791/ai-engineering-framework
+[aief-all]: https://github.com/flam7791
+[aief-p4]: https://github.com/flam7791/ai-engineering-framework/blob/main/docs/patterns.md#p4-deterministic-first-model-chooses-among-retrieved-candidates
+[aief-p7]: https://github.com/flam7791/ai-engineering-framework/blob/main/docs/patterns.md#p7-bounded-judgment-a-typed-decision-from-a-closed-answer-set
+
 ## The problem
 
 Organisations that publish in several languages spend skilled time matching citations to the
